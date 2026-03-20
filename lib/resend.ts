@@ -2,7 +2,18 @@ import { Resend } from "resend";
 import type { Order } from "@/types";
 import { formatPrice } from "./utils";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+let resend: Resend | null = null;
+
+function getResend(): Resend {
+  if (!resend) {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) {
+      throw new Error("RESEND_API_KEY is not set");
+    }
+    resend = new Resend(key);
+  }
+  return resend;
+}
 
 export async function sendOrderConfirmationEmail(order: Order): Promise<void> {
   const itemsHtml = order.items
@@ -17,7 +28,7 @@ export async function sendOrderConfirmationEmail(order: Order): Promise<void> {
     )
     .join("");
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL ?? "noreply@chasethepulls.com",
     to: order.email,
     subject: `Order Confirmed! #${order.id.slice(-8).toUpperCase()} - Chase The Pulls`,
@@ -107,7 +118,7 @@ export async function sendOrderShippedEmail(
   order: Order,
   trackingNumber: string
 ): Promise<void> {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL ?? "noreply@chasethepulls.com",
     to: order.email,
     subject: `Your Order Has Shipped! #${order.id.slice(-8).toUpperCase()} - Chase The Pulls`,
