@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build / next
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# env (secrets)
+.env
+.env.local
+.env*.local
+
+# debug / os
+.DS_Store
+desktop.ini
+*.pem
+npm-debug.log*
+Thumbs.db
+
+# ide
+.idea/
+.vscode/
+*.swp
+
+# prisma
+# keep migrations; ignore if you use local sqlite files only
+
+# misc temp
+chase-temp/
