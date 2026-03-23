@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/utils"
 import { Plus, Pencil, Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/types"
+import { CATEGORY_LABELS, CATEGORY_COLORS, GAME_LABELS, GAME_COLORS } from "@/types"
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton"
 
 export default async function AdminProductsPage() {
@@ -38,7 +38,8 @@ export default async function AdminProductsPage() {
             <thead>
               <tr className="border-b border-surface-border">
                 <th className="text-left p-4 text-sm font-medium text-white/50">Product</th>
-                <th className="text-left p-4 text-sm font-medium text-white/50">Category</th>
+                <th className="text-left p-4 text-sm font-medium text-white/50">Game</th>
+                <th className="text-left p-4 text-sm font-medium text-white/50">Type</th>
                 <th className="text-right p-4 text-sm font-medium text-white/50">Price</th>
                 <th className="text-right p-4 text-sm font-medium text-white/50">Stock</th>
                 <th className="text-right p-4 text-sm font-medium text-white/50">Featured</th>
@@ -48,7 +49,7 @@ export default async function AdminProductsPage() {
             <tbody>
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-12 text-center">
+                  <td colSpan={7} className="p-12 text-center">
                     <Package className="w-12 h-12 text-white/20 mx-auto mb-3" />
                     <p className="text-white/40">No products yet</p>
                     <Button variant="glow" size="sm" className="mt-4" asChild>
@@ -58,7 +59,8 @@ export default async function AdminProductsPage() {
                 </tr>
               ) : (
                 products.map((product) => {
-                  const color = CATEGORY_COLORS[product.category as keyof typeof CATEGORY_COLORS]
+                  const typeColor = CATEGORY_COLORS[product.category as keyof typeof CATEGORY_COLORS]
+                  const gameColor = GAME_COLORS[product.game as keyof typeof GAME_COLORS]
                   return (
                     <tr key={product.id} className="border-b border-surface-border hover:bg-surface2/50 transition-colors">
                       <td className="p-4">
@@ -79,7 +81,19 @@ export default async function AdminProductsPage() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ color, background: `${color}15`, border: `1px solid ${color}30` }}>
+                        <span
+                          className="px-2 py-0.5 rounded-full text-xs font-medium"
+                          style={{
+                            color: gameColor,
+                            background: `${gameColor}18`,
+                            border: `1px solid ${gameColor}35`,
+                          }}
+                        >
+                          {GAME_LABELS[product.game as keyof typeof GAME_LABELS]}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ color: typeColor, background: `${typeColor}15`, border: `1px solid ${typeColor}30` }}>
                           {CATEGORY_LABELS[product.category as keyof typeof CATEGORY_LABELS]}
                         </span>
                       </td>

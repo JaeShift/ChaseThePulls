@@ -9,6 +9,17 @@ cloudinary.config({
 
 export { cloudinary };
 
+/** Non-null when Cloudinary env is incomplete (common after typos or missing restart). */
+export function getCloudinaryEnvError(): string | null {
+  const name = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME?.trim();
+  const key = process.env.CLOUDINARY_API_KEY?.trim();
+  const secret = process.env.CLOUDINARY_API_SECRET?.trim();
+  if (!name) return "Missing NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME in .env.local";
+  if (!key) return "Missing CLOUDINARY_API_KEY in .env.local";
+  if (!secret) return "Missing CLOUDINARY_API_SECRET in .env.local";
+  return null;
+}
+
 export async function uploadImage(
   file: string,
   folder = "chase-the-pulls/products"

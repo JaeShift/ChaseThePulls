@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/CartContext"
 import { toast } from "@/components/ui/use-toast"
 import { formatPrice, getDiscountPercent } from "@/lib/utils"
-import { CATEGORY_LABELS, CATEGORY_COLORS, CATEGORY_BG, type Product } from "@/types"
+import { subtabLabel } from "@/lib/game-subtabs"
+import { CATEGORY_LABELS, GAME_LABELS, GAME_COLORS, type Product } from "@/types"
 
 interface ProductCardProps {
   product: Product
@@ -52,16 +53,16 @@ export function ProductCard({ product }: ProductCardProps) {
     ? getDiscountPercent(product.price, product.comparePrice)
     : null
 
-  const categoryColor = CATEGORY_COLORS[product.category]
-  const categoryBg = CATEGORY_BG[product.category]
+  const gameColor = GAME_COLORS[product.game]
+  const gameBadgeFg = product.game === "POKEMON" ? "#080C14" : "#F8FAFF"
 
   return (
     <HolographicCard className="rounded-2xl group">
-      <PackReveal active={burst} color={categoryColor} />
+      <PackReveal active={burst} color={gameColor} />
       <Link href={`/shop/${product.slug}`}>
         <div className="rounded-2xl border border-surface-border bg-surface overflow-hidden transition-all duration-300 group-hover:border-opacity-50"
           style={{
-            borderColor: `${categoryColor}30`,
+            borderColor: `${gameColor}35`,
           }}
         >
           {/* Image container */}
@@ -79,7 +80,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 <div className="text-center">
                   <Zap
                     className="w-16 h-16 mx-auto mb-2"
-                    style={{ color: categoryColor, opacity: 0.3 }}
+                    style={{ color: gameColor, opacity: 0.3 }}
                   />
                   <p className="text-white/20 text-xs">No Image</p>
                 </div>
@@ -103,13 +104,18 @@ export function ProductCard({ product }: ProductCardProps) {
               )}
             </div>
 
-            {/* Category badge */}
-            <div className="absolute top-3 right-3">
+            {/* Game badge */}
+            <div className="absolute top-3 right-3 max-w-[min(140px,46%)]">
               <span
-                className="px-2 py-0.5 rounded-full text-xs font-semibold"
-                style={{ background: categoryBg, color: categoryColor, border: `1px solid ${categoryColor}40` }}
+                className="px-2 py-0.5 rounded-full text-xs font-semibold block truncate text-center"
+                style={{
+                  background: gameColor,
+                  color: gameBadgeFg,
+                  border: `1px solid ${gameColor}`,
+                }}
+                title={GAME_LABELS[product.game]}
               >
-                {CATEGORY_LABELS[product.category]}
+                {GAME_LABELS[product.game]}
               </span>
             </div>
 
@@ -142,6 +148,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* Card info */}
           <div className="p-4">
+            <p className="text-[10px] uppercase tracking-wider text-white/35 mb-0.5 truncate">
+              {subtabLabel(product.game, product.subcategory)} · {CATEGORY_LABELS[product.category]}
+            </p>
             {product.set && (
               <p className="text-xs text-white/40 mb-1 truncate">{product.set}</p>
             )}
@@ -150,7 +159,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </h3>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold" style={{ color: categoryColor }}>
+                <span className="text-lg font-bold" style={{ color: gameColor }}>
                   {formatPrice(product.price)}
                 </span>
                 {product.comparePrice && (

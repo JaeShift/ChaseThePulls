@@ -22,11 +22,41 @@ enum OrderStatus {
 
 enum ProductCategory {
   BOOSTER_PACK
+  BOOSTER_BOX
+  BOOSTER_BUNDLE
+  STARTER_STRUCTURE_DECK
+  COLLECTION_BOX
+  ACCESSORIES
   ETB
   BLISTER
-  BOOSTER_BUNDLE
   UPC
   SPC
+  TIN
+  BOXED_SET
+}
+
+enum ProductGame {
+  ONE_PIECE
+  MAGIC_THE_GATHERING
+  POKEMON
+  YUGIOH
+}
+
+enum ProductSubcategory {
+  TRADING_CARD_GAME
+  PLUSH
+  FUNKO
+  MISCELLANEOUS
+}
+
+enum PokemonPlushCharacter {
+  PIKACHU
+  EEVEE
+  CHARIZARD
+  GENGAR
+  SNORLAX
+  MEW
+  PSYDUCK
 }
 
 model User {
@@ -87,13 +117,21 @@ model Product {
   name         String
   slug         String          @unique
   description  String?
+  details      String?
   price        Float
   comparePrice Float?
   images       String[]
-  category     ProductCategory
+  game          ProductGame        @default(POKEMON)
+  subcategory   ProductSubcategory @default(TRADING_CARD_GAME)
+  category      ProductCategory
   stock        Int             @default(0)
   featured     Boolean         @default(false)
   set          String?
+  plushPopular    Boolean                @default(false)
+  plushExclusive  Boolean                @default(false)
+  plushLarge      Boolean                @default(false)
+  plushDeal       Boolean                @default(false)
+  pokemonPlush    PokemonPlushCharacter?
   orderItems   OrderItem[]
   cartItems    CartItem[]
   createdAt    DateTime        @default(now())

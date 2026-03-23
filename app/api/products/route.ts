@@ -8,6 +8,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const category = searchParams.get("category")
+    const game = searchParams.get("game")
+    const subcategory = searchParams.get("subcategory")
     const featured = searchParams.get("featured")
     const search = searchParams.get("search")
     const take = parseInt(searchParams.get("take") ?? "50")
@@ -15,11 +17,14 @@ export async function GET(req: NextRequest) {
     const products = await prisma.product.findMany({
       where: {
         ...(category && { category: category as any }),
+        ...(game && { game: game as any }),
+        ...(subcategory && { subcategory: subcategory as any }),
         ...(featured === "true" && { featured: true }),
         ...(search && {
           OR: [
             { name: { contains: search, mode: "insensitive" } },
             { description: { contains: search, mode: "insensitive" } },
+            { details: { contains: search, mode: "insensitive" } },
           ],
         }),
       },
@@ -49,10 +54,13 @@ export async function POST(req: NextRequest) {
         name: data.name,
         slug: data.slug,
         description: data.description,
+        details: data.details?.trim() || null,
         price: data.price,
         comparePrice: data.comparePrice,
         images: data.images,
-        category: data.category,
+        category: data.category as never,
+        game: data.game,
+        subcategory: data.subcategory,
         stock: data.stock,
         featured: data.featured,
         set: data.set,

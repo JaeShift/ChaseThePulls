@@ -7,16 +7,28 @@ import { ShopFilters } from "@/components/shop/ShopFilters"
 import { StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal"
 import { Skeleton } from "@/components/ui/skeleton"
 import { prisma } from "@/lib/prisma"
-import type { ProductCategory } from "@/types"
+import { isTcgTabSlug, TCG_TAB_CATEGORY_GROUPS } from "@/lib/tcg-shop-tabs"
+import type { ProductCategory, ProductGame, ProductSubcategory } from "@/types"
+import { GAME_LABELS, isProductCategory } from "@/types"
 import { Search } from "lucide-react"
+import { ShopSearchBar } from "@/components/shop/ShopSearchBar"
+
+const PRODUCT_GAMES: ProductGame[] = ["ONE_PIECE", "MAGIC_THE_GATHERING", "POKEMON", "YUGIOH"]
+const PRODUCT_SUBCATEGORIES: ProductSubcategory[] = [
+  "TRADING_CARD_GAME",
+  "PLUSH",
+  "FUNKO",
+  "MISCELLANEOUS",
+]
 
 export const metadata: Metadata = {
-  title: "Shop Pokémon TCG Products",
+  title: "Shop Trading Card Products",
   description:
-    "Browse our full selection of sealed Pokémon TCG products. Shop Booster Packs, Elite Trainer Boxes, Blisters, Booster Bundles, Ultra Premium Collections, and Special Collections.",
+    "Browse sealed TCG products: Pokémon, Magic: The Gathering, Yu-Gi-Oh!, One Piece, Lorcana, Gundam, and more. Booster packs, collector boxes, blisters, bundles, premium and special collections.",
   openGraph: {
     title: "Shop | Chase The Pulls",
-    description: "Find your next great pull. Browse Pokémon TCG sealed products at Chase The Pulls.",
+    description:
+      "Find your next great pull. Sealed trading card products across your favorite games at Chase The Pulls.",
     type: "website",
   },
 }
@@ -24,31 +36,74 @@ export const metadata: Metadata = {
 interface ShopPageProps {
   searchParams: Promise<{
     category?: string
+    game?: string
+    subcategory?: string
+    tcg?: string
     sort?: string
     search?: string
     page?: string
   }>
 }
 
+function shopHeading(params: { game?: string; category?: string }) {
+  if (params.game && params.game in GAME_LABELS) {
+    return GAME_LABELS[params.game as ProductGame]
+  }
+  if (params.category) {
+    return params.category.replace(/_/g, " ")
+  }
+  return "All Products"
+}
+
 async function getProducts(params: {
   category?: string
+  game?: string
+  subcategory?: string
+  tcg?: string
   sort?: string
   search?: string
   page?: string
 }) {
-  const { category, sort, search, page } = params
+  const { category, game, subcategory, tcg, sort, search, page } = params
   const pageNum = parseInt(page ?? "1")
   const perPage = 24
 
+  const onTcgSection =
+    subcategory === "TRADING_CARD_GAME" &&
+    !!game &&
+    PRODUCT_GAMES.includes(game as ProductGame) &&
+    PRODUCT_SUBCATEGORIES.includes(subcategory as ProductSubcategory)
+
+  let categoryFilter: { category: ProductCategory } | { category: { in: ProductCategory[] } } | object =
+    {}
+
+  if (onTcgSection) {
+    if (isTcgTabSlug(tcg)) {
+      categoryFilter = { category: { in: [...TCG_TAB_CATEGORY_GROUPS[tcg]] } }
+    } else if (category && isProductCategory(category)) {
+      categoryFilter = { category: category as ProductCategory }
+    }
+  } else if (category && isProductCategory(category)) {
+    categoryFilter = { category: category as ProductCategory }
+  }
+
   const where = {
-    ...(category && { category: category as ProductCategory }),
+    ...(game && PRODUCT_GAMES.includes(game as ProductGame) && { game: game as ProductGame }),
+    ...(game &&
+      PRODUCT_GAMES.includes(game as ProductGame) &&
+      subcategory &&
+      PRODUCT_SUBCATEGORIES.includes(subcategory as ProductSubcategory) && {
+        subcategory: subcategory as ProductSubcategory,
+      }),
     ...(search && {
       OR: [
         { name: { contains: search, mode: "insensitive" as const } },
         { description: { contains: search, mode: "insensitive" as const } },
+        { details: { contains: search, mode: "insensitive" as const } },
         { set: { contains: search, mode: "insensitive" as const } },
       ],
     }),
+    ...categoryFilter,
   }
 
   const orderBy =
@@ -63,12 +118,13 @@ async function getProducts(params: {
   try {
     const [products, total] = await Promise.all([
       prisma.product.findMany({
-        where,
+        // Prisma client types lag until `npx prisma generate` after enum migration
+        where: where as never,
         orderBy,
         skip: (pageNum - 1) * perPage,
         take: perPage,
       }),
-      prisma.product.count({ where }),
+      prisma.product.count({ where: where as never }),
     ])
     return { products, total, pages: Math.ceil(total / perPage), page: pageNum }
   } catch {
@@ -101,8 +157,8 @@ async function ShopContent({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <p className="text-white/50 text-sm">
+      <div className="flex justify-center mb-6">
+        <p className="text-white/50 text-sm text-center">
           {total} {total === 1 ? "product" : "products"} found
         </p>
       </div>
@@ -130,6 +186,9 @@ async function ShopContent({
                 const pageNum = i + 1
                 const p = new URLSearchParams()
                 if (searchParams.category) p.set("category", searchParams.category)
+                if (searchParams.game) p.set("game", searchParams.game)
+                if (searchParams.subcategory) p.set("subcategory", searchParams.subcategory)
+                if (searchParams.tcg) p.set("tcg", searchParams.tcg)
                 if (searchParams.sort) p.set("sort", searchParams.sort)
                 if (searchParams.search) p.set("search", searchParams.search)
                 p.set("page", pageNum.toString())
@@ -161,17 +220,21 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   return (
     <div className="pt-24 pb-16 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-10">
+        {/* Page title */}
+        <div className="text-center max-w-4xl mx-auto">
           <h1 className="font-display font-bold text-4xl md:text-5xl text-white mb-2">
-            {params.category
-              ? params.category.replace(/_/g, " ")
-              : "All Products"}
+            {shopHeading(params)}
           </h1>
-          <p className="text-white/50">Chase your next great pull</p>
+          <p className="text-white/50 mb-8">Chase your next great pull</p>
         </div>
 
-        {/* Filters bar */}
+        <Suspense>
+          <div className="mb-8 w-full">
+            <ShopSearchBar />
+          </div>
+        </Suspense>
+
+        {/* Sub-type tabs when a game is selected */}
         <Suspense>
           <ShopFilters />
         </Suspense>

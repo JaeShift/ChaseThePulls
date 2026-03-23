@@ -6,7 +6,15 @@ import Link from "next/link"
 import { Suspense } from "react"
 import { prisma } from "@/lib/prisma"
 import { formatPrice } from "@/lib/utils"
-import { CATEGORY_LABELS, CATEGORY_COLORS, CATEGORY_BG } from "@/types"
+import { subtabLabel } from "@/lib/game-subtabs"
+import {
+  CATEGORY_LABELS,
+  CATEGORY_COLORS,
+  CATEGORY_BG,
+  GAME_LABELS,
+  GAME_COLORS,
+  GAME_BG,
+} from "@/types"
 import { AddToCartButton } from "@/components/shop/AddToCartButton"
 import { HolographicCard } from "@/components/animations/HolographicCard"
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal"
@@ -34,10 +42,10 @@ async function getProduct(slug: string) {
   }
 }
 
-async function getRelatedProducts(category: string, excludeSlug: string) {
+async function getRelatedProducts(game: string, excludeSlug: string) {
   try {
     return await prisma.product.findMany({
-      where: { category: category as never, slug: { not: excludeSlug }, stock: { gt: 0 } },
+      where: { game: game as never, slug: { not: excludeSlug }, stock: { gt: 0 } },
       take: 4,
       orderBy: { createdAt: "desc" },
     })
@@ -66,12 +74,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   if (!product) notFound()
 
-  const related = await getRelatedProducts(product.category, product.slug)
-  const color = CATEGORY_COLORS[product.category as keyof typeof CATEGORY_COLORS] ?? "#FFD700"
-  const bg = CATEGORY_BG[product.category as keyof typeof CATEGORY_BG] ?? "rgba(255,215,0,0.05)"
+  const related = await getRelatedProducts(product.game, product.slug)
+  const color =
+    GAME_COLORS[product.game as keyof typeof GAME_COLORS] ??
+    CATEGORY_COLORS[product.category as keyof typeof CATEGORY_COLORS] ??
+    "#FFD700"
+  const bg =
+    GAME_BG[product.game as keyof typeof GAME_BG] ??
+    CATEGORY_BG[product.category as keyof typeof CATEGORY_BG] ??
+    "rgba(255,215,0,0.05)"
   const discount = product.comparePrice
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
     : null
+
+  const gameBadgeFg = product.game === "POKEMON" ? "#080C14" : "#F8FAFF"
 
   return (
     <div className="min-h-screen pt-20 pb-16">
@@ -82,8 +98,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ChevronRight className="w-3 h-3" />
           <Link href="/shop" className="hover:text-gold transition-colors">Shop</Link>
           <ChevronRight className="w-3 h-3" />
-          <Link href={`/shop?category=${product.category}`} className="hover:text-gold transition-colors">
-            {CATEGORY_LABELS[product.category as keyof typeof CATEGORY_LABELS]}
+          <Link href={`/shop?game=${product.game}`} className="hover:text-gold transition-colors">
+            {GAME_LABELS[product.game as keyof typeof GAME_LABELS]}
           </Link>
           <ChevronRight className="w-3 h-3" />
           <span className="text-white/60 truncate max-w-[200px]">{product.name}</span>
@@ -155,12 +171,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {/* Product Info */}
           <div className="flex flex-col gap-6">
-            {/* Category & Set */}
+            {/* Game, type & set */}
             <div className="flex flex-wrap items-center gap-2">
               <span
                 className="px-3 py-1 rounded-full text-sm font-semibold"
-                style={{ background: bg, color, border: `1px solid ${color}40` }}
+                style={{
+                  background: color,
+                  color: gameBadgeFg,
+                  border: `1px solid ${color}`,
+                  boxShadow: `0 0 20px ${color}35`,
+                }}
               >
+                {GAME_LABELS[product.game as keyof typeof GAME_LABELS]}
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm font-medium border border-surface-border text-white/70 bg-surface2/80">
+                {subtabLabel(product.game, product.subcategory)}
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm font-medium border border-surface-border text-white/55 bg-surface2/50">
                 {CATEGORY_LABELS[product.category as keyof typeof CATEGORY_LABELS]}
               </span>
               {product.set && (
@@ -227,6 +254,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <p className="text-white/60 leading-relaxed">{product.description}</p>
             )}
 
+            {/* More details (long-form) */}
+            {product.details && (
+              <div className="rounded-xl border border-surface-border bg-surface2/40 p-4">
+                <h2 className="text-sm font-semibold text-white/80 mb-2">Details</h2>
+                <div className="text-white/55 text-sm leading-relaxed whitespace-pre-wrap">{product.details}</div>
+              </div>
+            )}
+
             {/* Add to Cart */}
             <AddToCartButton product={product} />
 
@@ -260,7 +295,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <h2 className="font-display font-bold text-3xl text-white">
                   You Might <span className="text-gold">Also Like</span>
                 </h2>
-                <Link href={`/shop?category=${product.category}`} className="text-sm text-gold hover:text-gold-light transition-colors">
+                <Link
+                  href={`/shop?game=${product.game}`}
+                  className="text-sm text-gold hover:text-gold-light transition-colors"
+                >
                   View All →
                 </Link>
               </div>

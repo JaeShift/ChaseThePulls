@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Your Cart",
-  description: "Review your cart and proceed to secure checkout for your Pokémon TCG products.",
+  description: "Review your cart and proceed to secure checkout for trading card products.",
   robots: { index: false, follow: false },
 }
 

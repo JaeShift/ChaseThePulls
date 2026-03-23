@@ -1,15 +1,13 @@
 export const dynamic = "force-dynamic"
 
 import Link from "next/link"
-import { ArrowRight, Zap, Shield, Truck, Star } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AuroraBackground } from "@/components/animations/AuroraBackground"
 import { ParticleField } from "@/components/animations/ParticleField"
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal"
 import { ProductCard } from "@/components/shop/ProductCard"
-import { CategoryCard } from "@/components/shop/CategoryCard"
 import { prisma } from "@/lib/prisma"
-import { CATEGORY_LABELS, CATEGORY_COLORS, CATEGORY_BG, type ProductCategory } from "@/types"
 
 async function getFeaturedProducts() {
   try {
@@ -23,22 +21,6 @@ async function getFeaturedProducts() {
   }
 }
 
-const CATEGORIES: { key: ProductCategory; icon: string; desc: string }[] = [
-  { key: "BOOSTER_PACK", icon: "⚡", desc: "Single booster packs from the latest sets" },
-  { key: "ETB", icon: "🎁", desc: "The ultimate collector's box experience" },
-  { key: "BLISTER", icon: "📦", desc: "Promo blisters with exclusive cards" },
-  { key: "BOOSTER_BUNDLE", icon: "🎴", desc: "Multiple packs bundled together" },
-  { key: "UPC", icon: "👑", desc: "The pinnacle of Pokémon collecting" },
-  { key: "SPC", icon: "✨", desc: "Exclusive special collection sets" },
-]
-
-const FEATURES = [
-  { icon: Shield, title: "100% Authentic", desc: "All products sourced directly from authorized distributors" },
-  { icon: Truck, title: "Fast Shipping", desc: "Orders ship within 24 hours in protective packaging" },
-  { icon: Star, title: "Best Prices", desc: "Competitive pricing on all sealed Pokémon products" },
-  { icon: Zap, title: "New Releases", desc: "First access to new set releases and preorders" },
-]
-
 export default async function HomePage() {
   const featuredProducts = await getFeaturedProducts()
 
@@ -49,12 +31,6 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-gold/5 text-gold text-sm font-medium mb-8 animate-fade-in-up">
-            <Zap className="w-4 h-4 fill-gold" />
-            Premium Pokémon TCG Store
-          </div>
-
           {/* Main heading */}
           <h1
             className="font-display font-bold leading-none mb-6 animate-fade-in-up"
@@ -70,11 +46,17 @@ export default async function HomePage() {
           </h1>
 
           <p
-            className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 animate-fade-in-up"
+            className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-3 animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
-            Your ultimate destination for sealed Pokémon TCG products.
+            Your spot for sealed products across Pokémon, Magic: The Gathering, Yu-Gi-Oh!, and One Piece.
             Every pack holds the potential for something legendary.
+          </p>
+          <p
+            className="text-sm text-white/35 max-w-xl mx-auto mb-10 animate-fade-in-up tracking-wide"
+            style={{ animationDelay: "0.25s" }}
+          >
+            Pokémon · Magic · Yu-Gi-Oh! · One Piece
           </p>
 
           <div
@@ -92,60 +74,12 @@ export default async function HomePage() {
               </Link>
             </Button>
           </div>
-
-          {/* Stats */}
-          <div
-            className="flex items-center justify-center gap-8 mt-16 animate-fade-in-up"
-            style={{ animationDelay: "0.4s" }}
-          >
-            {[
-              { value: "500+", label: "Products" },
-              { value: "10k+", label: "Happy Customers" },
-              { value: "100%", label: "Authentic" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-2xl md:text-3xl font-display font-bold text-gold">{stat.value}</div>
-                <div className="text-xs text-white/40 mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30">
           <span className="text-xs tracking-widest">SCROLL</span>
           <div className="w-0.5 h-8 bg-gradient-to-b from-white/30 to-transparent animate-bounce-subtle" />
-        </div>
-      </section>
-
-      {/* Categories Grid */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <ScrollReveal className="text-center mb-16">
-            <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-4">
-              Shop By <span className="text-gold">Category</span>
-            </h2>
-            <p className="text-white/50 text-lg">Find exactly what you're looking for</p>
-          </ScrollReveal>
-
-          <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {CATEGORIES.map(({ key, icon, desc }) => {
-              const color = CATEGORY_COLORS[key]
-              const bg = CATEGORY_BG[key]
-              return (
-                <StaggerItem key={key}>
-                  <CategoryCard
-                    href={`/shop?category=${key}`}
-                    color={color}
-                    bg={bg}
-                    icon={icon}
-                    label={CATEGORY_LABELS[key]}
-                    desc={desc}
-                  />
-                </StaggerItem>
-              )
-            })}
-          </StaggerContainer>
         </div>
       </section>
 
@@ -183,25 +117,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
-      {/* Features Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-surface-border">
-        <div className="max-w-7xl mx-auto">
-          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
-              <StaggerItem key={title}>
-                <div className="text-center group">
-                  <div className="w-14 h-14 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-gold/20 group-hover:border-gold/40 transition-all duration-300">
-                    <Icon className="w-7 h-7 text-gold" />
-                  </div>
-                  <h3 className="font-semibold text-white mb-2">{title}</h3>
-                  <p className="text-white/50 text-sm">{desc}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
 
       {/* CTA Banner */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">

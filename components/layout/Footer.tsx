@@ -4,13 +4,11 @@ import { Zap, Mail, Instagram, Twitter } from "lucide-react"
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
-  const categories = [
-    { label: "Booster Packs", href: "/shop?category=BOOSTER_PACK" },
-    { label: "Elite Trainer Boxes", href: "/shop?category=ETB" },
-    { label: "Blister Packs", href: "/shop?category=BLISTER" },
-    { label: "Booster Bundles", href: "/shop?category=BOOSTER_BUNDLE" },
-    { label: "Ultra Premium Collections", href: "/shop?category=UPC" },
-    { label: "Special Premium Collections", href: "/shop?category=SPC" },
+  const games = [
+    { label: "One Piece", href: "/shop?game=ONE_PIECE" },
+    { label: "Magic: The Gathering", href: "/shop?game=MAGIC_THE_GATHERING" },
+    { label: "Pokémon", href: "/shop?game=POKEMON" },
+    { label: "Yu-Gi-Oh!", href: "/shop?game=YUGIOH" },
   ]
 
   const account = [
@@ -48,9 +46,8 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-white/40 text-sm leading-relaxed mb-6">
-              Your premier destination for authentic Pokémon card products.
-              From booster packs to ultra premium collections — we&apos;ve got
-              them all.
+              Authentic sealed trading card products — Pokémon, Magic: The Gathering, Yu-Gi-Oh!,
+              One Piece, Lorcana, Gundam, and more. From boosters to premium collections.
             </p>
             <div className="flex items-center gap-3">
               <a
@@ -77,13 +74,12 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Categories */}
           <div>
             <h3 className="font-display font-semibold text-white mb-4 tracking-widest uppercase text-xs">
-              Products
+              Shop by game
             </h3>
             <ul className="space-y-2.5">
-              {categories.map((c) => (
+              {games.map((c) => (
                 <li key={c.href}>
                   <Link
                     href={c.href}
@@ -131,8 +127,9 @@ export function Footer() {
                 support@chasethepulls.com
               </a>
               <p className="text-xs text-white/20 mt-4 leading-relaxed">
-                All Pokémon-related names and trademarks are property of
-                Nintendo / Creatures Inc. / GAME FREAK inc.
+                Game names, logos, and trademarks belong to their respective owners. Chase The Pulls
+                is not affiliated with Wizards of the Coast, The Pokémon Company, Konami, Bandai,
+                Disney, Sunrise, or other rights holders.
               </p>
             </div>
           </div>

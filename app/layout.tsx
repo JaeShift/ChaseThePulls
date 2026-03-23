@@ -21,22 +21,29 @@ const rajdhani = Rajdhani({
 
 export const metadata: Metadata = {
   title: {
-    default: "Chase The Pulls | Premium Pokémon TCG Cards",
+    default: "Chase The Pulls | Trading Cards & Sealed TCG",
     template: "%s | Chase The Pulls",
   },
   description:
-    "Shop premium Pokémon TCG sealed products including Booster Packs, Elite Trainer Boxes, Blister Packs, Booster Bundles, Ultra Premium Collections and Special Collections. Chase The Pulls — where every pack is a new adventure.",
+    "Shop sealed trading card products across Pokémon, Magic: The Gathering, Yu-Gi-Oh!, One Piece Card Game, Disney Lorcana, Gundam card games, and more — booster packs, collector boxes, blisters, bundles, and premium collections. Chase The Pulls — where every pack is a new adventure.",
   keywords: [
-    "Pokemon cards",
+    "trading cards",
+    "TCG",
     "Pokemon TCG",
+    "Magic The Gathering",
+    "Yu-Gi-Oh",
+    "Yu-Gi-Oh cards",
+    "One Piece card game",
+    "Disney Lorcana",
+    "Gundam card game",
     "booster packs",
-    "Elite Trainer Box",
-    "Pokemon sealed products",
+    "sealed products",
     "Chase The Pulls",
   ],
   openGraph: {
-    title: "Chase The Pulls | Premium Pokémon TCG Cards",
-    description: "Shop premium Pokémon TCG sealed products. Chase the thrill, chase the pulls.",
+    title: "Chase The Pulls | Trading Cards & Sealed TCG",
+    description:
+      "Premium sealed products for Pokémon, MTG, Yu-Gi-Oh!, One Piece, Lorcana, Gundam & more. Chase the thrill, chase the pulls.",
     type: "website",
     siteName: "Chase The Pulls",
   },

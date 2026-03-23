@@ -61,7 +61,7 @@ export default function CheckoutPage() {
             <ShoppingCart className="w-10 h-10 text-white/20" />
           </div>
           <h1 className="font-display font-bold text-2xl text-white mb-3">Your cart is empty</h1>
-          <p className="text-white/50 mb-6">Add some Pokémon cards to your cart first.</p>
+          <p className="text-white/50 mb-6">Add some products to your cart first.</p>
           <Button variant="glow" asChild>
             <Link href="/shop">Browse Shop</Link>
           </Button>

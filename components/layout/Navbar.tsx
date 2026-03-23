@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react"
 import { ShoppingCart, User, Menu, X, Zap, LogOut, Settings, Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/CartContext"
+import { GAME_LABELS } from "@/types"
 import { motion, AnimatePresence } from "framer-motion"
 
 export function Navbar() {
@@ -22,10 +23,10 @@ export function Navbar() {
   }, [])
 
   const navLinks = [
-    { href: "/shop", label: "Shop" },
-    { href: "/shop?category=ETB", label: "ETBs" },
-    { href: "/shop?category=BOOSTER_PACK", label: "Booster Packs" },
-    { href: "/shop?category=UPC", label: "UPCs" },
+    { href: "/shop?game=ONE_PIECE", label: "One Piece" },
+    { href: "/shop?game=MAGIC_THE_GATHERING", label: GAME_LABELS.MAGIC_THE_GATHERING },
+    { href: "/shop?game=POKEMON", label: "Pokémon" },
+    { href: "/shop?game=YUGIOH", label: "Yu-Gi-Oh!" },
   ]
 
   return (

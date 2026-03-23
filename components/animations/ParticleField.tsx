@@ -26,6 +26,11 @@ const COLORS = [
   "#FF8C00", // Orange
 ]
 
+/** Lower = slower, calmer motion (1 = original feel) */
+const SPEED_FACTOR = 0.2
+const SIN_DRIFT = 0.0055
+const DRIFT_AMP = 0.18
+
 export function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
@@ -54,12 +59,12 @@ export function ParticleField() {
       x: Math.random() * canvas.width,
       y: canvas.height + 20,
       size: Math.random() * 5 + 1.5,
-      speedX: (Math.random() - 0.5) * 1.2,
-      speedY: -(Math.random() * 1.8 + 0.4),
+      speedX: (Math.random() - 0.5) * 1.2 * SPEED_FACTOR,
+      speedY: -(Math.random() * 1.8 + 0.4) * SPEED_FACTOR,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
       opacity: 0,
       life: 0,
-      maxLife: Math.random() * 220 + 120,
+      maxLife: (Math.random() * 220 + 120) * 1.65,
       type: Math.random() < 0.6 ? "orb" : Math.random() < 0.5 ? "star" : "diamond",
     })
 
@@ -120,12 +125,12 @@ export function ParticleField() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Add new particles occasionally
-      if (Math.random() < 0.18 && particlesRef.current.length < 65) {
+      if (Math.random() < 0.065 && particlesRef.current.length < 65) {
         particlesRef.current.push(createParticle())
       }
 
       // Occasionally spawn near mouse
-      if (Math.random() < 0.04 && mouseRef.current.x > 0) {
+      if (Math.random() < 0.016 && mouseRef.current.x > 0) {
         const p = createParticle()
         p.x = mouseRef.current.x + (Math.random() - 0.5) * 100
         p.y = mouseRef.current.y + (Math.random() - 0.5) * 100
@@ -151,23 +156,25 @@ export function ParticleField() {
         const dy = p.y - mouseRef.current.y
         const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist < 120 && dist > 0) {
-          const force = (120 - dist) / 120 * 0.4
+          const force = ((120 - dist) / 120) * 0.22 * SPEED_FACTOR
           p.speedX += (dx / dist) * force
           p.speedY += (dy / dist) * force
           // Dampen speed to prevent runaway
           const speed = Math.sqrt(p.speedX * p.speedX + p.speedY * p.speedY)
-          if (speed > 3) {
-            p.speedX = (p.speedX / speed) * 3
-            p.speedY = (p.speedY / speed) * 3
+          const maxSpeed = 0.75
+          if (speed > maxSpeed) {
+            p.speedX = (p.speedX / speed) * maxSpeed
+            p.speedY = (p.speedY / speed) * maxSpeed
           }
         }
 
-        p.x += p.speedX + Math.sin(p.life * 0.018 + p.size) * 0.4
+        p.x += p.speedX + Math.sin(p.life * SIN_DRIFT + p.size) * DRIFT_AMP * SPEED_FACTOR
         p.y += p.speedY
 
         // Gradually restore natural drift
         p.speedX *= 0.985
-        p.speedY = p.speedY * 0.995 - 0.3 * (1 - Math.abs(p.speedY) / 5)
+        p.speedY =
+          p.speedY * 0.995 - 0.18 * SPEED_FACTOR * (1 - Math.abs(p.speedY) / 5)
 
         if (p.type === "orb") {
           // Glow orb

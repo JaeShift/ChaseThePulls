@@ -5,8 +5,11 @@ import { LayoutDashboard, Package, ShoppingBag, Settings, Zap } from "lucide-rea
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
-  if (!session?.user || session.user.role !== "ADMIN") {
-    redirect("/login")
+  if (!session?.user) {
+    redirect("/login?callbackUrl=/admin")
+  }
+  if (session.user.role !== "ADMIN") {
+    redirect("/")
   }
 
   const navItems = [

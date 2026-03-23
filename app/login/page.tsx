@@ -158,6 +158,11 @@ export default function LoginPage() {
             Create one
           </Link>
         </p>
+        <p className="text-center text-xs text-white/30 mt-4">
+          <Link href="/setup-admin" className="hover:text-white/50 underline-offset-2">
+            Store admin setup
+          </Link>
+        </p>
       </motion.div>
     </div>
   )

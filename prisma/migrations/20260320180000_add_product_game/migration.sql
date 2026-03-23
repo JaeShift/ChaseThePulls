@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "ProductGame" AS ENUM ('ONE_PIECE', 'MAGIC_THE_GATHERING', 'POKEMON', 'YUGIOH');
+
+-- AlterTable
+ALTER TABLE "Product" ADD COLUMN "game" "ProductGame" NOT NULL DEFAULT 'POKEMON';

@@ -12,6 +12,8 @@ interface Product {
   price: number
   images: string[]
   category: string
+  game?: string
+  subcategory?: string
   stock: number
 }
 

@@ -82,14 +82,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.email = user.email ?? token.email;
         token.role = (user as { role?: string }).role ?? "USER";
       }
       return token;
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+      }
+      const email = session.user?.email ?? (token.email as string | undefined);
+      if (email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true, role: true, name: true, image: true },
+        });
+        if (dbUser) {
+          session.user.id = dbUser.id;
+          session.user.role = dbUser.role;
+          session.user.name = dbUser.name ?? session.user.name;
+          session.user.image = dbUser.image ?? session.user.image;
+        }
       }
       return session;
     },
