@@ -37,7 +37,7 @@ const CATEGORIES = [
   "BOXED_SET",
 ] as const
 
-const GAMES: ProductGame[] = ["ONE_PIECE", "MAGIC_THE_GATHERING", "POKEMON", "YUGIOH"]
+const GAMES: ProductGame[] = ["MAGIC_THE_GATHERING", "POKEMON", "ONE_PIECE", "YUGIOH"]
 
 /** Instant local preview — avoids waiting on FileReader (large files felt “broken”). */
 function previewUrlForFile(file: File): string {
@@ -238,7 +238,7 @@ export function ProductForm({ product, mode }: ProductFormProps) {
         {/* Main Info */}
         <div className="lg:col-span-2 space-y-6">
           <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-            <h2 className="font-semibold text-white">Product Information</h2>
+            <h2 className="font-semibold text-foreground">Product Information</h2>
 
             <div className="space-y-1.5">
               <Label>Product Name</Label>
@@ -267,7 +267,7 @@ export function ProductForm({ product, mode }: ProductFormProps) {
 
             <div className="space-y-1.5">
               <Label>More details</Label>
-              <p className="text-xs text-white/40 -mt-0.5 mb-1">
+              <p className="text-xs text-foreground/40 -mt-0.5 mb-1">
                 Extra info for the product page: specs, what&apos;s in the box, size, materials, care, etc.
               </p>
               <Textarea
@@ -286,7 +286,7 @@ export function ProductForm({ product, mode }: ProductFormProps) {
 
           {/* Images */}
           <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-            <h2 className="font-semibold text-white">Product Images</h2>
+            <h2 className="font-semibold text-foreground">Product Images</h2>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 min-w-0">
               {images.map((img, i) => (
@@ -299,12 +299,12 @@ export function ProductForm({ product, mode }: ProductFormProps) {
                   <button
                     type="button"
                     onClick={() => removeImage(i)}
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 flex items-center justify-center text-white/80 hover:text-electric-red opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 flex items-center justify-center text-foreground/80 hover:text-electric-red opacity-0 group-hover:opacity-100 transition-opacity z-10"
                   >
                     <X className="w-4 h-4" />
                   </button>
                   {i === 0 && (
-                    <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded text-xs bg-gold/90 text-background font-medium z-10">
+                    <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded text-xs bg-accent/90 text-white font-medium z-10">
                       Main
                     </span>
                   )}
@@ -317,7 +317,7 @@ export function ProductForm({ product, mode }: ProductFormProps) {
                   className={`relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl overflow-hidden border bg-surface2 ring-1 ${
                     status === "failed"
                       ? "border-electric-red/50 ring-electric-red/20"
-                      : "border-gold/40 ring-gold/20"
+                      : "border-accent/40 ring-accent/20"
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -328,8 +328,8 @@ export function ProductForm({ product, mode }: ProductFormProps) {
                   />
                   {status === "uploading" && (
                     <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 bg-gradient-to-t from-black/80 to-transparent py-3 pt-8">
-                      <Loader2 className="h-5 w-5 shrink-0 animate-spin text-gold" />
-                      <span className="text-[11px] font-medium text-white/90">Uploading…</span>
+                      <Loader2 className="h-5 w-5 shrink-0 animate-spin text-accent" />
+                      <span className="text-[11px] font-medium text-foreground/90">Uploading…</span>
                     </div>
                   )}
                   {status === "failed" && (
@@ -341,7 +341,7 @@ export function ProductForm({ product, mode }: ProductFormProps) {
                       <button
                         type="button"
                         onClick={() => dismissPending(id)}
-                        className="rounded-lg bg-white/10 px-3 py-1.5 text-xs text-white/90 hover:bg-white/20"
+                        className="rounded-lg bg-white/10 px-3 py-1.5 text-xs text-foreground/90 hover:bg-white/20"
                       >
                         Dismiss
                       </button>
@@ -351,10 +351,10 @@ export function ProductForm({ product, mode }: ProductFormProps) {
               ))}
 
               {/* Upload button */}
-              <label className="aspect-[3/4] min-w-0 w-full rounded-xl border-2 border-dashed border-surface-border hover:border-gold/50 flex flex-col items-center justify-center cursor-pointer text-white/40 hover:text-gold transition-all duration-200 group">
+              <label className="aspect-[3/4] min-w-0 w-full rounded-xl border-2 border-dashed border-surface-border hover:border-accent/50 flex flex-col items-center justify-center cursor-pointer text-foreground/40 hover:text-accent transition-all duration-200 group">
                 <input type="file" className="hidden" accept="image/*" multiple onChange={handleImageUpload} disabled={uploading} />
                 {uploading ? (
-                  <Loader2 className="w-8 h-8 animate-spin text-gold" />
+                  <Loader2 className="w-8 h-8 animate-spin text-accent" />
                 ) : (
                   <>
                     <Upload className="w-8 h-8 mb-2" />
@@ -371,21 +371,21 @@ export function ProductForm({ product, mode }: ProductFormProps) {
         <div className="space-y-4">
           {/* Pricing */}
           <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-            <h2 className="font-semibold text-white">Pricing</h2>
+            <h2 className="font-semibold text-foreground">Pricing</h2>
             <div className="space-y-1.5">
               <Label>Price ($)</Label>
               <Input type="number" step="0.01" min="0" placeholder="0.00" {...register("price")} />
               {errors.price && <p className="text-xs text-electric-red">{errors.price.message}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label>Compare-at Price ($) <span className="text-white/40">(optional)</span></Label>
+              <Label>Compare-at Price ($) <span className="text-foreground/40">(optional)</span></Label>
               <Input type="number" step="0.01" min="0" placeholder="0.00" {...register("comparePrice")} />
             </div>
           </div>
 
           {/* Category & Stock */}
           <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-            <h2 className="font-semibold text-white">Organization</h2>
+            <h2 className="font-semibold text-foreground">Organization</h2>
             <div className="space-y-1.5">
               <Label>Game / franchise</Label>
               <Select
@@ -459,7 +459,7 @@ export function ProductForm({ product, mode }: ProductFormProps) {
               <input
                 id="featured"
                 type="checkbox"
-                className="w-4 h-4 rounded border-surface-border bg-surface accent-gold"
+                className="w-4 h-4 rounded border-surface-border bg-surface accent-accent"
                 {...register("featured")}
               />
               <Label htmlFor="featured">Featured product</Label>

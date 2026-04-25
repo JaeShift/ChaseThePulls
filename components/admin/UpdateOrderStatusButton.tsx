@@ -59,7 +59,7 @@ export function UpdateOrderStatusButton({
         value={currentStatus}
         onChange={(e) => handleStatusChange(e.target.value)}
         disabled={loading}
-        className={`appearance-none pr-8 pl-3 py-1.5 rounded-lg text-xs font-bold bg-[#12122a] border border-[rgba(255,215,0,0.2)] cursor-pointer hover:border-gold/40 transition-colors disabled:opacity-50 ${STATUS_COLORS[currentStatus]}`}
+        className={`appearance-none pr-8 pl-3 py-1.5 rounded-lg text-xs font-bold bg-[#12122a] border border-[rgba(99,102,241,0.25)] cursor-pointer hover:border-accent/40 transition-colors disabled:opacity-50 ${STATUS_COLORS[currentStatus]}`}
       >
         {STATUS_OPTIONS.map((status) => (
           <option key={status} value={status} className="text-foreground bg-[#0d0d24]">

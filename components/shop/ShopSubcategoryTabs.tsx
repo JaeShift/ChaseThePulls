@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { GAME_COLORS, type ProductGame } from "@/types"
 import { SUBTABS_BY_GAME } from "@/lib/game-subtabs"
 
-const VALID_GAMES: ProductGame[] = ["ONE_PIECE", "MAGIC_THE_GATHERING", "POKEMON", "YUGIOH"]
+const VALID_GAMES: ProductGame[] = ["MAGIC_THE_GATHERING", "POKEMON", "ONE_PIECE", "YUGIOH"]
 
 export function ShopSubcategoryTabs() {
   const router = useRouter()
@@ -37,9 +37,9 @@ export function ShopSubcategoryTabs() {
   }
 
   return (
-    <div className="w-full border-b border-surface-border/80 bg-surface/30">
+    <div className="w-full border-b border-surface-border bg-surface/80">
       <nav
-        className="flex flex-wrap justify-center gap-1 sm:gap-2 px-4 py-0 overflow-x-auto scrollbar-hide sm:overflow-visible"
+        className="flex flex-wrap justify-center gap-1 sm:gap-2 px-4 py-0 overflow-x-auto overscroll-x-contain scrollbar-hide sm:overflow-visible"
         aria-label="Browse by product type"
       >
       <button
@@ -47,8 +47,8 @@ export function ShopSubcategoryTabs() {
         onClick={() => setSubcategory(null)}
         className={`shrink-0 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium transition-colors border-b-2 -mb-px ${
           !activeSub
-            ? "text-white border-white/40"
-            : "text-white/40 border-transparent hover:text-white/65"
+            ? "text-foreground border-foreground/30"
+            : "text-foreground/40 border-transparent hover:text-foreground/65"
         }`}
       >
         All
@@ -61,7 +61,7 @@ export function ShopSubcategoryTabs() {
             type="button"
             onClick={() => setSubcategory(value)}
             className={`shrink-0 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium transition-colors border-b-2 -mb-px ${
-              isActive ? "" : "text-white/40 border-transparent hover:text-white/65"
+              isActive ? "" : "text-foreground/40 border-transparent hover:text-foreground/65"
             }`}
             style={
               isActive

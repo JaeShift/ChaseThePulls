@@ -122,7 +122,7 @@ export function StaggerItem({
 export function GlowReveal({
   children,
   className,
-  color = "rgba(255, 215, 0, 0.3)",
+  color = "rgba(99, 102, 241, 0.28)",
   delay = 0,
 }: {
   children: React.ReactNode

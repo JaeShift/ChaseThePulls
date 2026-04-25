@@ -8,26 +8,26 @@ export const SUBTABS_BY_GAME: Record<
   POKEMON: [
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
+    { value: "CLOTHING", label: "Clothing" },
     { value: "FUNKO", label: "Funkos" },
-    { value: "MISCELLANEOUS", label: "Miscellaneous" },
   ],
   ONE_PIECE: [
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
+    { value: "CLOTHING", label: "Clothing" },
     { value: "FUNKO", label: "Funkos" },
-    { value: "MISCELLANEOUS", label: "Miscellaneous" },
   ],
   MAGIC_THE_GATHERING: [
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
+    { value: "CLOTHING", label: "Clothing" },
     { value: "FUNKO", label: "Funkos" },
-    { value: "MISCELLANEOUS", label: "Miscellaneous" },
   ],
   YUGIOH: [
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
+    { value: "CLOTHING", label: "Clothing" },
     { value: "FUNKO", label: "Funkos" },
-    { value: "MISCELLANEOUS", label: "Miscellaneous" },
   ],
 }
 
@@ -41,12 +41,12 @@ const SUBCATEGORY_FALLBACK_LABELS: Record<ProductSubcategory, string> = {
   TRADING_CARD_GAME: "Trading Card Game",
   PLUSH: "Plush",
   FUNKO: "Funkos",
-  MISCELLANEOUS: "Miscellaneous",
+  CLOTHING: "Clothing",
 }
 
 export const ALL_SUBCATEGORIES: ProductSubcategory[] = [
   "TRADING_CARD_GAME",
   "PLUSH",
+  "CLOTHING",
   "FUNKO",
-  "MISCELLANEOUS",
 ]

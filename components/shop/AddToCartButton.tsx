@@ -45,10 +45,10 @@ export function AddToCartButton({ product }: { product: Product }) {
   if (product.stock === 0) {
     return (
       <div className="flex flex-col gap-4">
-        <div className="w-full py-4 rounded-xl text-center font-bold text-white/30 border border-surface-border bg-surface cursor-not-allowed">
+        <div className="w-full py-4 rounded-xl text-center font-bold text-foreground/30 border border-surface-border bg-surface cursor-not-allowed">
           Out of Stock
         </div>
-        <p className="text-sm text-white/40 text-center">
+        <p className="text-sm text-foreground/40 text-center">
           Sign up to get notified when this item is back in stock.
         </p>
       </div>
@@ -59,19 +59,19 @@ export function AddToCartButton({ product }: { product: Product }) {
     <div className="flex flex-col gap-4">
       {/* Quantity Selector */}
       <div className="flex items-center gap-4">
-        <span className="text-sm font-medium text-white/50">Quantity</span>
+        <span className="text-sm font-medium text-foreground/50">Quantity</span>
         <div className="flex items-center rounded-lg border border-surface-border overflow-hidden">
           <button
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            className="w-10 h-10 flex items-center justify-center text-white/60 hover:text-gold hover:bg-gold/10 transition-colors"
+            className="w-10 h-10 flex items-center justify-center text-foreground/60 hover:text-accent hover:bg-accent/10 transition-colors"
           >
             <Minus className="w-3.5 h-3.5" />
           </button>
-          <span className="w-12 text-center font-bold text-white">{quantity}</span>
+          <span className="w-12 text-center font-bold text-foreground">{quantity}</span>
           <button
             onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
             disabled={quantity >= product.stock}
-            className="w-10 h-10 flex items-center justify-center text-white/60 hover:text-gold hover:bg-gold/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-10 h-10 flex items-center justify-center text-foreground/60 hover:text-accent hover:bg-accent/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
@@ -86,7 +86,7 @@ export function AddToCartButton({ product }: { product: Product }) {
         onClick={handleAdd}
         disabled={isLoading || added}
         whileTap={{ scale: 0.97 }}
-        className="relative w-full py-4 rounded-xl font-bold text-lg overflow-hidden bg-gold text-background shadow-lg shadow-gold/20 hover:bg-gold-light transition-colors disabled:opacity-80"
+        className="relative w-full py-4 rounded-xl font-bold text-lg overflow-hidden bg-accent text-white shadow-lg shadow-slate-900/15 hover:bg-accent-light transition-colors disabled:opacity-80"
       >
         <AnimatePresence mode="wait">
           {added ? (

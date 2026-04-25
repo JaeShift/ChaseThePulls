@@ -46,7 +46,7 @@ enum ProductSubcategory {
   TRADING_CARD_GAME
   PLUSH
   FUNKO
-  MISCELLANEOUS
+  CLOTHING
 }
 
 enum PokemonPlushCharacter {

@@ -16,8 +16,8 @@ interface Particle {
 }
 
 const COLORS = [
-  "#FFD700", // Gold
-  "#FFD700", // Gold (double weight)
+  "#6366F1",
+  "#6366F1",
   "#00D4FF", // Cyan
   "#8B5CF6", // Purple
   "#FF3B3B", // Red
@@ -221,7 +221,7 @@ export function ParticleField() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.65 }}
+      style={{ opacity: 0.22 }}
     />
   )
 }

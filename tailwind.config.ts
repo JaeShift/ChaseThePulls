@@ -9,15 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#080C14",
-        surface: "#0E1520",
-        surface2: "#131C2E",
-        "surface-border": "#1A2540",
-        gold: "#FFD700",
-        "gold-light": "#FFE44D",
-        "gold-dark": "#CC9900",
-        "electric-red": "#FF3B3B",
-        "electric-cyan": "#00D4FF",
+        background: "#050713",
+        foreground: "#F8FAFC",
+        surface: "#0B1020",
+        surface2: "#151B31",
+        "surface-border": "#26304A",
+        /** Brand neon violet. */
+        accent: "#6D5DF6",
+        "accent-light": "#8B7CFF",
+        "accent-dark": "#4F46E5",
+        "electric-red": "#FF4D6D",
+        "electric-cyan": "#22D3EE",
         "electric-purple": "#8B5CF6",
         "electric-green": "#10B981",
         "electric-pink": "#EC4899",
@@ -55,10 +57,10 @@ const config: Config = {
         },
         "pulse-glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.1)",
+            boxShadow: "0 0 20px rgba(109, 93, 246, 0.35), 0 0 44px rgba(109, 93, 246, 0.16)",
           },
           "50%": {
-            boxShadow: "0 0 60px rgba(255, 215, 0, 0.7), 0 0 100px rgba(255, 215, 0, 0.3)",
+            boxShadow: "0 0 54px rgba(139, 124, 255, 0.5), 0 0 100px rgba(34, 211, 238, 0.18)",
           },
         },
         aurora: {
@@ -104,11 +106,11 @@ const config: Config = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         holographic:
-          "linear-gradient(135deg, #ff0080, #ff8c00, #ffd700, #00ff80, #00ffff, #8000ff, #ff0080)",
+          "linear-gradient(135deg, #ff0080, #6366f1, #4f46e5, #22d3ee, #a855f7, #4f46e5, #ff0080)",
         "hero-gradient":
-          "radial-gradient(ellipse at top, #0F1A35 0%, #080C14 50%, #0A0E1A 100%)",
+          "radial-gradient(ellipse at top, #151B31 0%, #080B18 45%, #050713 100%)",
         "card-gradient":
-          "linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(0,212,255,0.05) 100%)",
+          "linear-gradient(135deg, rgba(109,93,246,0.18) 0%, rgba(34,211,238,0.08) 100%)",
       },
       backdropBlur: {
         xs: "2px",

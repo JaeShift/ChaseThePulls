@@ -28,9 +28,9 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-surface-border bg-surface text-white",
-        destructive: "border-electric-red/30 bg-electric-red/10 text-white",
-        success: "border-electric-green/30 bg-electric-green/10 text-white",
+        default: "border-surface-border bg-surface text-foreground",
+        destructive: "border-electric-red/30 bg-electric-red/10 text-foreground",
+        success: "border-electric-green/30 bg-electric-green/10 text-foreground",
       },
     },
     defaultVariants: {
@@ -62,7 +62,7 @@ const ToastAction = React.forwardRef<
     ref={ref}
     className={cn(
       "inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-surface-border bg-transparent px-3 text-sm font-medium transition-colors",
-      "hover:bg-surface2 focus:outline-none focus:ring-1 focus:ring-gold",
+      "hover:bg-surface2 focus:outline-none focus:ring-1 focus:ring-accent",
       "disabled:pointer-events-none disabled:opacity-50",
       className
     )}
@@ -78,7 +78,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-white/50 opacity-0 transition-opacity hover:text-white focus:opacity-100 focus:outline-none focus:ring-1 group-hover:opacity-100",
+      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-1 group-hover:opacity-100",
       className
     )}
     toast-close=""
@@ -107,7 +107,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("text-sm text-white/60", className)}
+    className={cn("text-sm text-foreground/60", className)}
     {...props}
   />
 ));

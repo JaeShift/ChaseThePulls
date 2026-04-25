@@ -60,7 +60,7 @@ export function HoloCard({ children, className }: HoloCardProps) {
       <div
         className="absolute inset-0 rounded-2xl pointer-events-none z-10"
         style={{
-          background: `radial-gradient(circle at var(--holo-x) var(--holo-y), rgba(255,215,0,0.2) 0%, rgba(0,212,255,0.1) 30%, rgba(139,92,246,0.08) 60%, transparent 70%)`,
+          background: `radial-gradient(circle at var(--holo-x) var(--holo-y), rgba(99,102,241,0.18) 0%, rgba(0,212,255,0.1) 30%, rgba(139,92,246,0.08) 60%, transparent 70%)`,
           opacity: "var(--holo-opacity)" as unknown as number,
           transition: "opacity 0.3s ease",
           mixBlendMode: "overlay",

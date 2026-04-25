@@ -18,11 +18,11 @@ export function CartDrawer() {
       <SheetContent side="right" className="flex flex-col w-full sm:max-w-md p-0">
         {/* Header */}
         <SheetHeader className="px-6 py-4 border-b border-surface-border">
-          <SheetTitle className="flex items-center gap-2 font-display tracking-wider text-white">
-            <ShoppingCart className="w-5 h-5 text-gold" />
+          <SheetTitle className="flex items-center gap-2 font-display tracking-wider text-foreground">
+            <ShoppingCart className="w-5 h-5 text-accent" />
             Cart
             {itemCount > 0 && (
-              <span className="ml-auto text-sm font-normal text-white/60">
+              <span className="ml-auto text-sm font-normal text-foreground/60">
                 {itemCount} {itemCount === 1 ? "item" : "items"}
               </span>
             )}
@@ -34,10 +34,10 @@ export function CartDrawer() {
           {!cart?.items.length ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-16">
               <div className="w-20 h-20 rounded-full bg-surface2 border border-surface-border flex items-center justify-center mb-4">
-                <Zap className="w-10 h-10 text-gold/30" />
+                <Zap className="w-10 h-10 text-accent/30" />
               </div>
-              <p className="text-white/60 font-medium mb-2">Your cart is empty</p>
-              <p className="text-white/30 text-sm mb-6">Add some packs to get started!</p>
+              <p className="text-foreground/60 font-medium mb-2">Your cart is empty</p>
+              <p className="text-foreground/30 text-sm mb-6">Add some packs to get started!</p>
               <Button variant="glow" size="sm" onClick={closeCart} asChild>
                 <Link href="/shop">
                   Browse Shop <ArrowRight className="w-4 h-4 ml-1" />
@@ -69,7 +69,7 @@ export function CartDrawer() {
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Zap className="w-8 h-8 text-gold/30" />
+                          <Zap className="w-8 h-8 text-accent/30" />
                         </div>
                       )}
                     </div>
@@ -79,11 +79,11 @@ export function CartDrawer() {
                       <Link
                         href={`/shop/${item.product.slug}`}
                         onClick={closeCart}
-                        className="text-sm font-medium text-white hover:text-gold transition-colors line-clamp-2"
+                        className="text-sm font-medium text-foreground hover:text-accent transition-colors line-clamp-2"
                       >
                         {item.product.name}
                       </Link>
-                      <p className="text-gold font-semibold mt-1">
+                      <p className="text-accent font-semibold mt-1">
                         {formatPrice(item.product.price)}
                       </p>
 
@@ -93,24 +93,24 @@ export function CartDrawer() {
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             disabled={item.quantity <= 1}
-                            className="w-7 h-7 flex items-center justify-center text-white/60 hover:text-gold hover:bg-gold/10 transition-colors disabled:opacity-30"
+                            className="w-7 h-7 flex items-center justify-center text-foreground/60 hover:text-accent hover:bg-accent/10 transition-colors disabled:opacity-30"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-8 text-center text-sm font-medium text-white">
+                          <span className="w-8 text-center text-sm font-medium text-foreground">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             disabled={item.quantity >= item.product.stock}
-                            className="w-7 h-7 flex items-center justify-center text-white/60 hover:text-gold hover:bg-gold/10 transition-colors disabled:opacity-30"
+                            className="w-7 h-7 flex items-center justify-center text-foreground/60 hover:text-accent hover:bg-accent/10 transition-colors disabled:opacity-30"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
                         </div>
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="text-white/30 hover:text-electric-red transition-colors ml-auto"
+                          className="text-foreground/30 hover:text-electric-red transition-colors ml-auto"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -128,18 +128,18 @@ export function CartDrawer() {
           <div className="border-t border-surface-border px-6 py-4 space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-white/60">Subtotal</span>
-                <span className="text-white font-medium">{formatPrice(subtotal)}</span>
+                <span className="text-foreground/60">Subtotal</span>
+                <span className="text-foreground font-medium">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-white/60">Shipping</span>
+                <span className="text-foreground/60">Shipping</span>
                 <span className="text-electric-green text-sm font-medium">Calculated at checkout</span>
               </div>
             </div>
             <Separator />
             <div className="flex justify-between font-bold">
-              <span className="text-white">Total</span>
-              <span className="text-gold text-lg">{formatPrice(subtotal)}</span>
+              <span className="text-foreground">Total</span>
+              <span className="text-accent text-lg">{formatPrice(subtotal)}</span>
             </div>
             <div className="flex flex-col gap-2">
               <Button variant="glow" size="lg" className="w-full" asChild>

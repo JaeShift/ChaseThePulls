@@ -9,17 +9,24 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { prisma } from "@/lib/prisma"
 import { isTcgTabSlug, TCG_TAB_CATEGORY_GROUPS } from "@/lib/tcg-shop-tabs"
 import type { ProductCategory, ProductGame, ProductSubcategory } from "@/types"
-import { GAME_LABELS, isProductCategory } from "@/types"
+import { CATEGORY_LABELS, GAME_LABELS, isProductCategory } from "@/types"
 import { Search } from "lucide-react"
 import { ShopSearchBar } from "@/components/shop/ShopSearchBar"
 
-const PRODUCT_GAMES: ProductGame[] = ["ONE_PIECE", "MAGIC_THE_GATHERING", "POKEMON", "YUGIOH"]
+const PRODUCT_GAMES: ProductGame[] = ["MAGIC_THE_GATHERING", "POKEMON", "ONE_PIECE", "YUGIOH"]
 const PRODUCT_SUBCATEGORIES: ProductSubcategory[] = [
   "TRADING_CARD_GAME",
   "PLUSH",
+  "CLOTHING",
   "FUNKO",
-  "MISCELLANEOUS",
 ]
+
+const SUBCATEGORY_SHOP_HEADINGS: Record<ProductSubcategory, string> = {
+  TRADING_CARD_GAME: "Trading card games",
+  PLUSH: "Plush & soft goods",
+  CLOTHING: "Clothing",
+  FUNKO: "Funko & vinyl",
+}
 
 export const metadata: Metadata = {
   title: "Shop Trading Card Products",
@@ -45,9 +52,18 @@ interface ShopPageProps {
   }>
 }
 
-function shopHeading(params: { game?: string; category?: string }) {
+function shopHeading(params: { game?: string; category?: string; subcategory?: string }) {
   if (params.game && params.game in GAME_LABELS) {
     return GAME_LABELS[params.game as ProductGame]
+  }
+  if (params.category && isProductCategory(params.category)) {
+    return CATEGORY_LABELS[params.category]
+  }
+  if (
+    params.subcategory &&
+    PRODUCT_SUBCATEGORIES.includes(params.subcategory as ProductSubcategory)
+  ) {
+    return SUBCATEGORY_SHOP_HEADINGS[params.subcategory as ProductSubcategory]
   }
   if (params.category) {
     return params.category.replace(/_/g, " ")
@@ -89,9 +105,7 @@ async function getProducts(params: {
 
   const where = {
     ...(game && PRODUCT_GAMES.includes(game as ProductGame) && { game: game as ProductGame }),
-    ...(game &&
-      PRODUCT_GAMES.includes(game as ProductGame) &&
-      subcategory &&
+    ...(subcategory &&
       PRODUCT_SUBCATEGORIES.includes(subcategory as ProductSubcategory) && {
         subcategory: subcategory as ProductSubcategory,
       }),
@@ -158,16 +172,16 @@ async function ShopContent({
   return (
     <div>
       <div className="flex justify-center mb-6">
-        <p className="text-white/50 text-sm text-center">
+        <p className="text-foreground/50 text-sm text-center">
           {total} {total === 1 ? "product" : "products"} found
         </p>
       </div>
 
       {products.length === 0 ? (
         <div className="text-center py-24">
-          <Search className="w-16 h-16 text-white/20 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">No products found</h3>
-          <p className="text-white/50">Try adjusting your filters or search term</p>
+          <Search className="w-16 h-16 text-foreground/20 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-foreground mb-2">No products found</h3>
+          <p className="text-foreground/50">Try adjusting your filters or search term</p>
         </div>
       ) : (
         <>
@@ -198,8 +212,8 @@ async function ShopContent({
                     href={`/shop?${p.toString()}`}
                     className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-medium transition-all duration-200 border ${
                       page === pageNum
-                        ? "bg-gold text-background border-gold"
-                        : "border-surface-border text-white/60 hover:border-gold/50 hover:text-gold"
+                        ? "bg-accent text-white border-accent"
+                        : "border-surface-border text-foreground/60 hover:border-accent/50 hover:text-accent"
                     }`}
                   >
                     {pageNum}
@@ -218,14 +232,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams
 
   return (
-    <div className="pt-24 pb-16 min-h-screen">
+    <div className="min-h-screen pb-16 pt-32 sm:pt-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page title */}
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="font-display font-bold text-4xl md:text-5xl text-white mb-2">
+          <h1 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-2">
             {shopHeading(params)}
           </h1>
-          <p className="text-white/50 mb-8">Chase your next great pull</p>
+          <p className="text-foreground/50 mb-8">Chase your next great pull</p>
         </div>
 
         <Suspense>

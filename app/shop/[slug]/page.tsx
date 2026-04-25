@@ -78,11 +78,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const color =
     GAME_COLORS[product.game as keyof typeof GAME_COLORS] ??
     CATEGORY_COLORS[product.category as keyof typeof CATEGORY_COLORS] ??
-    "#FFD700"
+    "#6366F1"
   const bg =
     GAME_BG[product.game as keyof typeof GAME_BG] ??
     CATEGORY_BG[product.category as keyof typeof CATEGORY_BG] ??
-    "rgba(255,215,0,0.05)"
+    "rgba(99,102,241,0.06)"
   const discount = product.comparePrice
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
     : null
@@ -90,19 +90,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const gameBadgeFg = product.game === "POKEMON" ? "#080C14" : "#F8FAFF"
 
   return (
-    <div className="min-h-screen pt-20 pb-16">
+    <div className="min-h-screen pb-16 pt-32 sm:pt-36">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <nav className="flex items-center gap-2 text-sm text-white/40">
-          <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+        <nav className="flex items-center gap-2 text-sm text-foreground/40">
+          <Link href="/" className="hover:text-accent transition-colors">Home</Link>
           <ChevronRight className="w-3 h-3" />
-          <Link href="/shop" className="hover:text-gold transition-colors">Shop</Link>
+          <Link href="/shop" className="hover:text-accent transition-colors">Shop</Link>
           <ChevronRight className="w-3 h-3" />
-          <Link href={`/shop?game=${product.game}`} className="hover:text-gold transition-colors">
+          <Link href={`/shop?game=${product.game}`} className="hover:text-accent transition-colors">
             {GAME_LABELS[product.game as keyof typeof GAME_LABELS]}
           </Link>
           <ChevronRight className="w-3 h-3" />
-          <span className="text-white/60 truncate max-w-[200px]">{product.name}</span>
+          <span className="text-foreground/60 truncate max-w-[200px]">{product.name}</span>
         </nav>
       </div>
 
@@ -118,13 +118,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {/* Badges */}
                 <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
                   {product.stock === 0 && (
-                    <Badge variant="secondary" className="bg-white/10 text-white/60 border-white/10">
+                    <Badge variant="secondary" className="bg-white/10 text-foreground/60 border-white/10">
                       Sold Out
                     </Badge>
                   )}
                   {product.featured && (
-                    <Badge className="bg-gold/20 text-gold border-gold/30">
-                      <Star className="w-3 h-3 mr-1 fill-gold" /> Featured
+                    <Badge className="bg-accent/20 text-accent border-accent/30">
+                      <Star className="w-3 h-3 mr-1 fill-accent" /> Featured
                     </Badge>
                   )}
                 </div>
@@ -147,7 +147,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Package className="w-24 h-24 text-white/10" />
+                    <Package className="w-24 h-24 text-foreground/10" />
                   </div>
                 )}
               </div>
@@ -159,7 +159,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {product.images.slice(0, 5).map((img, i) => (
                   <div
                     key={i}
-                    className="relative w-16 h-20 rounded-lg overflow-hidden border-2 border-gold/30 hover:border-gold transition-colors cursor-pointer"
+                    className="relative w-16 h-20 rounded-lg overflow-hidden border-2 border-accent/30 hover:border-accent transition-colors cursor-pointer"
                     style={{ background: bg }}
                   >
                     <Image src={img} alt={`View ${i + 1}`} fill className="object-contain p-1" sizes="64px" />
@@ -184,21 +184,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
               >
                 {GAME_LABELS[product.game as keyof typeof GAME_LABELS]}
               </span>
-              <span className="px-3 py-1 rounded-full text-sm font-medium border border-surface-border text-white/70 bg-surface2/80">
+              <span className="px-3 py-1 rounded-full text-sm font-medium border border-surface-border text-foreground/70 bg-surface2/80">
                 {subtabLabel(product.game, product.subcategory)}
               </span>
-              <span className="px-3 py-1 rounded-full text-sm font-medium border border-surface-border text-white/55 bg-surface2/50">
+              <span className="px-3 py-1 rounded-full text-sm font-medium border border-surface-border text-foreground/55 bg-surface2/50">
                 {CATEGORY_LABELS[product.category as keyof typeof CATEGORY_LABELS]}
               </span>
               {product.set && (
-                <span className="px-3 py-1 rounded-full text-sm text-white/50 border border-surface-border">
+                <span className="px-3 py-1 rounded-full text-sm text-foreground/50 border border-surface-border">
                   {product.set}
                 </span>
               )}
             </div>
 
             {/* Title */}
-            <h1 className="font-display font-bold text-3xl md:text-4xl text-white leading-tight">
+            <h1 className="font-display font-bold text-3xl md:text-4xl text-foreground leading-tight">
               {product.name}
             </h1>
 
@@ -209,7 +209,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </span>
               {product.comparePrice && product.comparePrice > product.price && (
                 <>
-                  <span className="text-xl text-white/40 line-through">
+                  <span className="text-xl text-foreground/40 line-through">
                     {formatPrice(product.comparePrice)}
                   </span>
                   {discount && (
@@ -251,14 +251,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             {/* Description */}
             {product.description && (
-              <p className="text-white/60 leading-relaxed">{product.description}</p>
+              <p className="text-foreground/60 leading-relaxed">{product.description}</p>
             )}
 
             {/* More details (long-form) */}
             {product.details && (
               <div className="rounded-xl border border-surface-border bg-surface2/40 p-4">
-                <h2 className="text-sm font-semibold text-white/80 mb-2">Details</h2>
-                <div className="text-white/55 text-sm leading-relaxed whitespace-pre-wrap">{product.details}</div>
+                <h2 className="text-sm font-semibold text-foreground/80 mb-2">Details</h2>
+                <div className="text-foreground/55 text-sm leading-relaxed whitespace-pre-wrap">{product.details}</div>
               </div>
             )}
 
@@ -274,12 +274,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 { icon: Package, label: "Secure Packaging", sub: "Cards arrive perfect" },
               ].map(({ icon: Icon, label, sub }) => (
                 <div key={label} className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Icon className="w-4 h-4 text-gold" />
+                  <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Icon className="w-4 h-4 text-accent" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">{label}</p>
-                    <p className="text-xs text-white/40">{sub}</p>
+                    <p className="text-sm font-semibold text-foreground">{label}</p>
+                    <p className="text-xs text-foreground/40">{sub}</p>
                   </div>
                 </div>
               ))}
@@ -292,12 +292,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ScrollReveal>
             <div className="border-t border-surface-border pt-16">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="font-display font-bold text-3xl text-white">
-                  You Might <span className="text-gold">Also Like</span>
+                <h2 className="font-display font-bold text-3xl text-foreground">
+                  You Might <span className="text-accent">Also Like</span>
                 </h2>
                 <Link
                   href={`/shop?game=${product.game}`}
-                  className="text-sm text-gold hover:text-gold-light transition-colors"
+                  className="text-sm text-accent hover:text-accent-light transition-colors"
                 >
                   View All →
                 </Link>

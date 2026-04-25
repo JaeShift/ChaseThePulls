@@ -7,11 +7,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-gold/30 bg-gold/10 text-gold",
-        secondary: "border-surface-border bg-surface2 text-white/70",
+        default: "border-accent/30 bg-accent/10 text-accent",
+        secondary: "border-surface-border bg-surface2 text-foreground/70",
         destructive: "border-electric-red/30 bg-electric-red/10 text-electric-red",
         success: "border-electric-green/30 bg-electric-green/10 text-electric-green",
-        outline: "border-surface-border text-white/70",
+        outline: "border-surface-border text-foreground/70",
         cyan: "border-electric-cyan/30 bg-electric-cyan/10 text-electric-cyan",
         purple: "border-electric-purple/30 bg-electric-purple/10 text-electric-purple",
         pink: "border-electric-pink/30 bg-electric-pink/10 text-electric-pink",

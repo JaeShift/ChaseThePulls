@@ -43,7 +43,7 @@ export async function sendOrderConfirmationEmail(order: Order): Promise<void> {
           <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
             <!-- Header -->
             <div style="text-align: center; margin-bottom: 40px;">
-              <h1 style="font-size: 32px; font-weight: 900; color: #FFD700; margin: 0; letter-spacing: 2px;">
+              <h1 style="font-size: 32px; font-weight: 900; color: #4F46E5; margin: 0; letter-spacing: 2px;">
                 CHASE THE PULLS
               </h1>
               <p style="color: #8898AA; margin: 8px 0 0;">Your Order is Confirmed!</p>
@@ -54,7 +54,7 @@ export async function sendOrderConfirmationEmail(order: Order): Promise<void> {
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <div>
                   <p style="color: #8898AA; margin: 0; font-size: 14px;">Order Number</p>
-                  <p style="color: #FFD700; font-size: 20px; font-weight: 700; margin: 4px 0 0;">
+                  <p style="color: #4F46E5; font-size: 20px; font-weight: 700; margin: 4px 0 0;">
                     #${order.id.slice(-8).toUpperCase()}
                   </p>
                 </div>
@@ -95,8 +95,8 @@ export async function sendOrderConfirmationEmail(order: Order): Promise<void> {
                   <span style="color: #F0F4FF;">${formatPrice(order.tax)}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid #1A2540; margin-top: 12px;">
-                  <span style="color: #FFD700; font-weight: 700; font-size: 18px;">Total</span>
-                  <span style="color: #FFD700; font-weight: 700; font-size: 18px;">${formatPrice(order.total)}</span>
+                  <span style="color: #4F46E5; font-weight: 700; font-size: 18px;">Total</span>
+                  <span style="color: #4F46E5; font-weight: 700; font-size: 18px;">${formatPrice(order.total)}</span>
                 </div>
               </div>
             </div>
@@ -104,7 +104,7 @@ export async function sendOrderConfirmationEmail(order: Order): Promise<void> {
             <!-- Footer -->
             <div style="text-align: center; color: #8898AA; font-size: 14px;">
               <p>We'll send another email when your order ships.</p>
-              <p>Questions? Email us at <a href="mailto:support@chasethepulls.com" style="color: #FFD700;">support@chasethepulls.com</a></p>
+              <p>Questions? Email us at <a href="mailto:support@chasethepulls.com" style="color: #4F46E5;">support@chasethepulls.com</a></p>
               <p style="margin-top: 24px; font-size: 12px;">© ${new Date().getFullYear()} Chase The Pulls. All rights reserved.</p>
             </div>
           </div>
@@ -124,10 +124,10 @@ export async function sendOrderShippedEmail(
     subject: `Your Order Has Shipped! #${order.id.slice(-8).toUpperCase()} - Chase The Pulls`,
     html: `
       <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #080C14; font-family: sans-serif;">
-        <h1 style="color: #FFD700; text-align: center;">Your Order is On Its Way!</h1>
+        <h1 style="color: #4F46E5; text-align: center;">Your Order is On Its Way!</h1>
         <div style="background: #0E1520; border: 1px solid #1A2540; border-radius: 16px; padding: 32px; text-align: center;">
           <p style="color: #8898AA;">Order #${order.id.slice(-8).toUpperCase()}</p>
-          <p style="color: #F0F4FF;">Tracking Number: <strong style="color: #FFD700;">${trackingNumber}</strong></p>
+          <p style="color: #F0F4FF;">Tracking Number: <strong style="color: #4F46E5;">${trackingNumber}</strong></p>
         </div>
       </div>
     `,

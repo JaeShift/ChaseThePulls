@@ -22,8 +22,8 @@ export default async function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-4xl text-white mb-1">Products</h1>
-          <p className="text-white/50">{products.length} products total</p>
+          <h1 className="font-display font-bold text-4xl text-foreground mb-1">Products</h1>
+          <p className="text-foreground/50">{products.length} products total</p>
         </div>
         <Button variant="glow" asChild>
           <Link href="/admin/products/new">
@@ -37,21 +37,21 @@ export default async function AdminProductsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-surface-border">
-                <th className="text-left p-4 text-sm font-medium text-white/50">Product</th>
-                <th className="text-left p-4 text-sm font-medium text-white/50">Game</th>
-                <th className="text-left p-4 text-sm font-medium text-white/50">Type</th>
-                <th className="text-right p-4 text-sm font-medium text-white/50">Price</th>
-                <th className="text-right p-4 text-sm font-medium text-white/50">Stock</th>
-                <th className="text-right p-4 text-sm font-medium text-white/50">Featured</th>
-                <th className="text-right p-4 text-sm font-medium text-white/50">Actions</th>
+                <th className="text-left p-4 text-sm font-medium text-foreground/50">Product</th>
+                <th className="text-left p-4 text-sm font-medium text-foreground/50">Game</th>
+                <th className="text-left p-4 text-sm font-medium text-foreground/50">Type</th>
+                <th className="text-right p-4 text-sm font-medium text-foreground/50">Price</th>
+                <th className="text-right p-4 text-sm font-medium text-foreground/50">Stock</th>
+                <th className="text-right p-4 text-sm font-medium text-foreground/50">Featured</th>
+                <th className="text-right p-4 text-sm font-medium text-foreground/50">Actions</th>
               </tr>
             </thead>
             <tbody>
               {products.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="p-12 text-center">
-                    <Package className="w-12 h-12 text-white/20 mx-auto mb-3" />
-                    <p className="text-white/40">No products yet</p>
+                    <Package className="w-12 h-12 text-foreground/20 mx-auto mb-3" />
+                    <p className="text-foreground/40">No products yet</p>
                     <Button variant="glow" size="sm" className="mt-4" asChild>
                       <Link href="/admin/products/new">Add your first product</Link>
                     </Button>
@@ -70,13 +70,13 @@ export default async function AdminProductsPage() {
                               <Image src={product.images[0]} alt="" width={40} height={48} className="object-cover w-full h-full" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <Package className="w-4 h-4 text-white/20" />
+                                <Package className="w-4 h-4 text-foreground/20" />
                               </div>
                             )}
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-white line-clamp-1">{product.name}</p>
-                            {product.set && <p className="text-xs text-white/40">{product.set}</p>}
+                            <p className="text-sm font-medium text-foreground line-clamp-1">{product.name}</p>
+                            {product.set && <p className="text-xs text-foreground/40">{product.set}</p>}
                           </div>
                         </div>
                       </td>
@@ -98,9 +98,9 @@ export default async function AdminProductsPage() {
                         </span>
                       </td>
                       <td className="p-4 text-right">
-                        <span className="text-sm font-semibold text-gold">{formatPrice(product.price)}</span>
+                        <span className="text-sm font-semibold text-accent">{formatPrice(product.price)}</span>
                         {product.comparePrice && (
-                          <span className="block text-xs text-white/40 line-through">{formatPrice(product.comparePrice)}</span>
+                          <span className="block text-xs text-foreground/40 line-through">{formatPrice(product.comparePrice)}</span>
                         )}
                       </td>
                       <td className="p-4 text-right">

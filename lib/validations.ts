@@ -41,7 +41,7 @@ export const productSchema = z.object({
     "BOXED_SET",
   ]),
   game: z.enum(["ONE_PIECE", "MAGIC_THE_GATHERING", "POKEMON", "YUGIOH"]),
-  subcategory: z.enum(["TRADING_CARD_GAME", "PLUSH", "FUNKO", "MISCELLANEOUS"]),
+  subcategory: z.enum(["TRADING_CARD_GAME", "PLUSH", "FUNKO", "CLOTHING"]),
   stock: z.coerce.number().int().min(0, "Stock cannot be negative"),
   featured: z.boolean().default(false),
   set: z.string().optional().nullable(),

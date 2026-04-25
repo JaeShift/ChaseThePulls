@@ -8,7 +8,7 @@ interface PackRevealProps {
   color?: string
 }
 
-const BURST_COLORS = ["#FFD700", "#00D4FF", "#8B5CF6", "#10B981", "#EC4899", "#FF8C00"]
+const BURST_COLORS = ["#6366F1", "#00D4FF", "#8B5CF6", "#10B981", "#EC4899", "#818CF8"]
 
 interface Particle {
   angle: number
@@ -28,7 +28,7 @@ function createBurstParticles(count: number): Particle[] {
   }))
 }
 
-export function PackReveal({ active, color = "#FFD700" }: PackRevealProps) {
+export function PackReveal({ active, color = "#6366F1" }: PackRevealProps) {
   const particles = useRef(createBurstParticles(16))
 
   useEffect(() => {

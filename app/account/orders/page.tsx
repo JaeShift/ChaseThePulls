@@ -37,18 +37,18 @@ export default async function OrdersPage() {
   }
 
   return (
-    <div className="pt-24 pb-16 min-h-screen">
+    <div className="min-h-screen pb-16 pt-32 sm:pt-36">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="font-display font-bold text-4xl text-white mb-2">My Orders</h1>
-          <p className="text-white/50">{orders.length} {orders.length === 1 ? "order" : "orders"} total</p>
+          <h1 className="font-display font-bold text-4xl text-foreground mb-2">My Orders</h1>
+          <p className="text-foreground/50">{orders.length} {orders.length === 1 ? "order" : "orders"} total</p>
         </div>
 
         {orders.length === 0 ? (
           <div className="text-center py-24">
-            <Package className="w-20 h-20 text-white/20 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">No orders yet</h2>
-            <p className="text-white/50 mb-6">Start chasing pulls!</p>
+            <Package className="w-20 h-20 text-foreground/20 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-foreground mb-2">No orders yet</h2>
+            <p className="text-foreground/50 mb-6">Start chasing pulls!</p>
             <Button variant="glow" asChild>
               <Link href="/shop">Browse Shop <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
@@ -59,12 +59,12 @@ export default async function OrdersPage() {
               <div key={order.id} className="rounded-2xl border border-surface-border bg-surface p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                   <div>
-                    <p className="text-xs text-white/40 mb-1">Order Number</p>
-                    <p className="font-mono font-bold text-gold">#{order.id.slice(-8).toUpperCase()}</p>
+                    <p className="text-xs text-foreground/40 mb-1">Order Number</p>
+                    <p className="font-mono font-bold text-accent">#{order.id.slice(-8).toUpperCase()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-white/40 mb-1">Date</p>
-                    <p className="text-sm text-white">{new Date(order.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                    <p className="text-xs text-foreground/40 mb-1">Date</p>
+                    <p className="text-sm text-foreground">{new Date(order.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                   </div>
                   <div>
                     <Badge variant={STATUS_VARIANTS[order.status] ?? "secondary"}>
@@ -72,8 +72,8 @@ export default async function OrdersPage() {
                     </Badge>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-white/40 mb-1">Total</p>
-                    <p className="font-bold text-gold text-lg">{formatPrice(order.total)}</p>
+                    <p className="text-xs text-foreground/40 mb-1">Total</p>
+                    <p className="font-bold text-accent text-lg">{formatPrice(order.total)}</p>
                   </div>
                 </div>
 
@@ -86,17 +86,17 @@ export default async function OrdersPage() {
                           <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" />
                         )}
                       </div>
-                      <span className="text-white/70 flex-1 truncate">{item.product.name}</span>
-                      <span className="text-white/40">×{item.quantity}</span>
-                      <span className="text-white font-medium">{formatPrice(item.price * item.quantity)}</span>
+                      <span className="text-foreground/70 flex-1 truncate">{item.product.name}</span>
+                      <span className="text-foreground/40">×{item.quantity}</span>
+                      <span className="text-foreground font-medium">{formatPrice(item.price * item.quantity)}</span>
                     </div>
                   ))}
                 </div>
 
                 {order.trackingNumber && (
                   <div className="mt-4 pt-4 border-t border-surface-border">
-                    <p className="text-sm text-white/50">
-                      Tracking: <span className="text-gold font-mono">{order.trackingNumber}</span>
+                    <p className="text-sm text-foreground/50">
+                      Tracking: <span className="text-accent font-mono">{order.trackingNumber}</span>
                     </p>
                   </div>
                 )}

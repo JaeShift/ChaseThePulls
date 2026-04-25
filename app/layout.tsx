@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#FFD700",
+  themeColor: "#050713",
 }
 
 export default function RootLayout({
@@ -64,7 +64,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${rajdhani.variable}`}>
-      <body className="bg-background text-white font-body antialiased">
+      <body className="bg-background text-foreground font-body antialiased">
         <Providers>
           <Navbar />
           <CartDrawer />

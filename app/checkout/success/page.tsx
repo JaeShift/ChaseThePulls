@@ -22,7 +22,7 @@ export default function CheckoutSuccessPage() {
   }, [clearCart])
 
   return (
-    <div className="pt-24 pb-16 min-h-screen flex items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center pb-16 pt-32 sm:pt-36">
       <div className="max-w-lg mx-auto px-4 text-center">
         {/* Success animation */}
         <motion.div
@@ -52,31 +52,31 @@ export default function CheckoutSuccessPage() {
           transition={{ delay: 0.4 }}
           className="space-y-4"
         >
-          <h1 className="font-display font-bold text-4xl text-white">
+          <h1 className="font-display font-bold text-4xl text-foreground">
             Order Confirmed!
           </h1>
-          <p className="text-white/60 text-lg">
+          <p className="text-foreground/60 text-lg">
             Thank you for your purchase! You&apos;ll receive a confirmation email shortly.
           </p>
 
           {sessionId && (
             <div className="inline-block px-4 py-2 rounded-lg bg-surface border border-surface-border">
-              <p className="text-xs text-white/40">Order Reference</p>
-              <p className="text-gold font-mono text-sm">{sessionId.slice(-12).toUpperCase()}</p>
+              <p className="text-xs text-foreground/40">Order Reference</p>
+              <p className="text-accent font-mono text-sm">{sessionId.slice(-12).toUpperCase()}</p>
             </div>
           )}
 
           {/* What's next */}
           <div className="mt-8 p-6 rounded-2xl border border-surface-border bg-surface text-left space-y-4">
-            <h2 className="font-semibold text-white mb-3">What happens next?</h2>
+            <h2 className="font-semibold text-foreground mb-3">What happens next?</h2>
             {[
               { icon: CheckCircle, text: "Order confirmation email sent to your inbox" },
               { icon: Package, text: "Your order will be packed and shipped within 24-48 hours" },
               { icon: Zap, text: "Tracking information will be emailed once shipped" },
             ].map(({ icon: Icon, text }, i) => (
               <div key={i} className="flex items-start gap-3">
-                <Icon className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
-                <p className="text-white/60 text-sm">{text}</p>
+                <Icon className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                <p className="text-foreground/60 text-sm">{text}</p>
               </div>
             ))}
           </div>

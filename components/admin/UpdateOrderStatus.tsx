@@ -35,7 +35,7 @@ export function UpdateOrderStatus({ orderId, currentStatus }: { orderId: string;
       defaultValue={currentStatus}
       onChange={handleChange}
       disabled={loading}
-      className="text-xs rounded-lg border border-surface-border bg-surface2 text-white px-2 py-1.5 focus:outline-none focus:border-gold/50 cursor-pointer disabled:opacity-50"
+      className="text-xs rounded-lg border border-surface-border bg-surface2 text-foreground px-2 py-1.5 focus:outline-none focus:border-accent/50 cursor-pointer disabled:opacity-50"
     >
       {STATUSES.map((s) => (
         <option key={s} value={s}>{s}</option>

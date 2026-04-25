@@ -43,7 +43,7 @@ export function CategoryCard({ href, color, bg, icon, label, desc }: CategoryCar
           >
             {label}
           </h3>
-          <p className="text-white/40 text-sm">{desc}</p>
+          <p className="text-foreground/40 text-sm">{desc}</p>
         </div>
       </div>
     </Link>

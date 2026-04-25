@@ -52,33 +52,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 pb-8 px-4">
+    <div className="relative flex min-h-screen items-center justify-center px-6 pb-12 pt-32 sm:px-8 sm:pb-16 sm:pt-36 lg:px-10">
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
+        <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-accent/20 blur-3xl" />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="relative z-10 w-full max-w-md py-6 sm:py-10"
       >
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 group mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gold flex items-center justify-center shadow-lg shadow-gold/30">
-              <Zap className="w-6 h-6 text-background fill-background" />
+            <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/30">
+              <Zap className="w-6 h-6 text-white fill-white" />
             </div>
-            <span className="font-display font-bold text-xl text-white tracking-widest">
+            <span className="font-display font-bold text-xl text-foreground tracking-widest">
               CTP
             </span>
           </Link>
-          <h1 className="font-display font-bold text-3xl text-white mb-2">Welcome back</h1>
-          <p className="text-white/50">Sign in to continue chasing pulls</p>
+          <h1 className="font-display font-bold text-3xl text-foreground mb-2">Welcome back</h1>
+          <p className="text-foreground/50">Sign in to continue chasing pulls</p>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-surface-border bg-surface p-8 space-y-6">
+        <div className="space-y-6 rounded-2xl border border-surface-border bg-surface/85 p-8 shadow-2xl shadow-black/35 sm:p-10">
           {/* Google Sign In */}
           <Button
             variant="outline"
@@ -97,7 +97,7 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-surface-border" />
-            <span className="text-xs text-white/30 px-2">or</span>
+            <span className="text-xs text-foreground/30 px-2">or</span>
             <div className="flex-1 h-px bg-surface-border" />
           </div>
 
@@ -118,7 +118,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="text-xs text-gold hover:text-gold-light transition-colors">
+                <Link href="/forgot-password" className="text-xs text-accent hover:text-accent-light transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -133,7 +133,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -152,14 +152,14 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-white/40 mt-6">
+        <p className="text-center text-sm text-foreground/40 mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-gold hover:text-gold-light transition-colors font-medium">
+          <Link href="/register" className="text-accent hover:text-accent-light transition-colors font-medium">
             Create one
           </Link>
         </p>
-        <p className="text-center text-xs text-white/30 mt-4">
-          <Link href="/setup-admin" className="hover:text-white/50 underline-offset-2">
+        <p className="text-center text-xs text-foreground/30 mt-4">
+          <Link href="/setup-admin" className="hover:text-foreground/50 underline-offset-2">
             Store admin setup
           </Link>
         </p>

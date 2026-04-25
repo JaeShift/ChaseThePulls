@@ -7,13 +7,14 @@ import { ShoppingCart, Star, Zap } from "lucide-react"
 import { motion } from "framer-motion"
 import { HolographicCard } from "@/components/animations/HolographicCard"
 import { PackReveal } from "@/components/animations/PackReveal"
+import { GameLogo } from "@/components/shop/GameLogo"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/CartContext"
 import { toast } from "@/components/ui/use-toast"
 import { formatPrice, getDiscountPercent } from "@/lib/utils"
 import { subtabLabel } from "@/lib/game-subtabs"
-import { CATEGORY_LABELS, GAME_LABELS, GAME_COLORS, type Product } from "@/types"
+import { CATEGORY_LABELS, GAME_LABELS, GAME_COLORS, GAME_LOGO_BALANCE, type Product } from "@/types"
 
 interface ProductCardProps {
   product: Product
@@ -54,7 +55,6 @@ export function ProductCard({ product }: ProductCardProps) {
     : null
 
   const gameColor = GAME_COLORS[product.game]
-  const gameBadgeFg = product.game === "POKEMON" ? "#080C14" : "#F8FAFF"
 
   return (
     <HolographicCard className="rounded-2xl group">
@@ -82,7 +82,7 @@ export function ProductCard({ product }: ProductCardProps) {
                     className="w-16 h-16 mx-auto mb-2"
                     style={{ color: gameColor, opacity: 0.3 }}
                   />
-                  <p className="text-white/20 text-xs">No Image</p>
+                  <p className="text-foreground/20 text-xs">No Image</p>
                 </div>
               </div>
             )}
@@ -93,8 +93,8 @@ export function ProductCard({ product }: ProductCardProps) {
             {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-1.5">
               {product.featured && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-gold/90 text-background">
-                  <Star className="w-3 h-3 fill-background" /> Featured
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-accent/90 text-white">
+                  <Star className="w-3 h-3 fill-slate-900" /> Featured
                 </span>
               )}
               {discount && (
@@ -104,19 +104,20 @@ export function ProductCard({ product }: ProductCardProps) {
               )}
             </div>
 
-            {/* Game badge */}
-            <div className="absolute top-3 right-3 max-w-[min(140px,46%)]">
-              <span
-                className="px-2 py-0.5 rounded-full text-xs font-semibold block truncate text-center"
-                style={{
-                  background: gameColor,
-                  color: gameBadgeFg,
-                  border: `1px solid ${gameColor}`,
-                }}
-                title={GAME_LABELS[product.game]}
-              >
-                {GAME_LABELS[product.game]}
-              </span>
+            {/* Game franchise mark — logo only, no background container */}
+            <div className="absolute top-2.5 right-2.5 z-[1] h-3.5 w-14 sm:w-[4.5rem] pointer-events-none" title={GAME_LABELS[product.game]}>
+              <GameLogo
+                game={product.game}
+                balance={
+                  product.game === "POKEMON" || product.game === "ONE_PIECE"
+                    ? GAME_LOGO_BALANCE[product.game]
+                    : 1
+                }
+                heightClassName="h-3.5"
+                widthClassName="w-14 sm:w-[4.5rem]"
+                className="[filter:drop-shadow(0_1px_4px_rgba(0,0,0,0.7))]"
+                sizes="64px"
+              />
             </div>
 
             {/* Quick add button - appears on hover */}
@@ -148,13 +149,13 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* Card info */}
           <div className="p-4">
-            <p className="text-[10px] uppercase tracking-wider text-white/35 mb-0.5 truncate">
+            <p className="text-[10px] uppercase tracking-wider text-foreground/35 mb-0.5 truncate">
               {subtabLabel(product.game, product.subcategory)} · {CATEGORY_LABELS[product.category]}
             </p>
             {product.set && (
-              <p className="text-xs text-white/40 mb-1 truncate">{product.set}</p>
+              <p className="text-xs text-foreground/40 mb-1 truncate">{product.set}</p>
             )}
-            <h3 className="font-semibold text-white text-sm leading-tight mb-2 line-clamp-2 group-hover:text-gold transition-colors duration-200">
+            <h3 className="font-semibold text-foreground text-sm leading-tight mb-2 line-clamp-2 group-hover:text-accent transition-colors duration-200">
               {product.name}
             </h3>
             <div className="flex items-center justify-between">
@@ -163,7 +164,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   {formatPrice(product.price)}
                 </span>
                 {product.comparePrice && (
-                  <span className="text-sm text-white/40 line-through">
+                  <span className="text-sm text-foreground/40 line-through">
                     {formatPrice(product.comparePrice)}
                   </span>
                 )}
@@ -174,7 +175,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   Only {product.stock} left
                 </span>
               ) : product.stock === 0 ? (
-                <span className="text-xs text-white/40">Out of Stock</span>
+                <span className="text-xs text-foreground/40">Out of Stock</span>
               ) : (
                 <span className="text-xs text-electric-green font-medium">In Stock</span>
               )}

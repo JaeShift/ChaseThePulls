@@ -32,8 +32,8 @@ export default async function AdminOrdersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display font-bold text-4xl text-white mb-1">Orders</h1>
-        <p className="text-white/50">{orders.length} orders total</p>
+        <h1 className="font-display font-bold text-4xl text-foreground mb-1">Orders</h1>
+        <p className="text-foreground/50">{orders.length} orders total</p>
       </div>
 
       <div className="rounded-2xl border border-surface-border bg-surface overflow-hidden">
@@ -41,41 +41,41 @@ export default async function AdminOrdersPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-surface-border">
-                <th className="text-left p-4 text-sm font-medium text-white/50">Order</th>
-                <th className="text-left p-4 text-sm font-medium text-white/50">Customer</th>
-                <th className="text-left p-4 text-sm font-medium text-white/50">Items</th>
-                <th className="text-right p-4 text-sm font-medium text-white/50">Total</th>
-                <th className="text-center p-4 text-sm font-medium text-white/50">Status</th>
-                <th className="text-center p-4 text-sm font-medium text-white/50">Date</th>
-                <th className="text-right p-4 text-sm font-medium text-white/50">Actions</th>
+                <th className="text-left p-4 text-sm font-medium text-foreground/50">Order</th>
+                <th className="text-left p-4 text-sm font-medium text-foreground/50">Customer</th>
+                <th className="text-left p-4 text-sm font-medium text-foreground/50">Items</th>
+                <th className="text-right p-4 text-sm font-medium text-foreground/50">Total</th>
+                <th className="text-center p-4 text-sm font-medium text-foreground/50">Status</th>
+                <th className="text-center p-4 text-sm font-medium text-foreground/50">Date</th>
+                <th className="text-right p-4 text-sm font-medium text-foreground/50">Actions</th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-12 text-center text-white/40">No orders yet</td>
+                  <td colSpan={7} className="p-12 text-center text-foreground/40">No orders yet</td>
                 </tr>
               ) : (
                 orders.map((order) => (
                   <tr key={order.id} className="border-b border-surface-border hover:bg-surface2/50 transition-colors">
                     <td className="p-4">
-                      <p className="font-mono text-sm text-gold">#{order.id.slice(-8).toUpperCase()}</p>
+                      <p className="font-mono text-sm text-accent">#{order.id.slice(-8).toUpperCase()}</p>
                     </td>
                     <td className="p-4">
-                      <p className="text-sm text-white">{order.user?.name ?? order.email}</p>
-                      <p className="text-xs text-white/40">{order.email}</p>
+                      <p className="text-sm text-foreground">{order.user?.name ?? order.email}</p>
+                      <p className="text-xs text-foreground/40">{order.email}</p>
                     </td>
                     <td className="p-4">
                       <div className="space-y-0.5">
                         {order.items.map((item) => (
-                          <p key={item.id} className="text-xs text-white/60">
+                          <p key={item.id} className="text-xs text-foreground/60">
                             {item.product.name} × {item.quantity}
                           </p>
                         ))}
                       </div>
                     </td>
                     <td className="p-4 text-right">
-                      <span className="font-bold text-gold">{formatPrice(order.total)}</span>
+                      <span className="font-bold text-accent">{formatPrice(order.total)}</span>
                     </td>
                     <td className="p-4 text-center">
                       <Badge variant={STATUS_VARIANTS[order.status] ?? "secondary"}>
@@ -83,7 +83,7 @@ export default async function AdminOrdersPage() {
                       </Badge>
                     </td>
                     <td className="p-4 text-center">
-                      <span className="text-xs text-white/50">
+                      <span className="text-xs text-foreground/50">
                         {new Date(order.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                       </span>
                     </td>

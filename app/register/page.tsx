@@ -57,28 +57,28 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 pb-8 px-4">
+    <div className="relative flex min-h-screen items-center justify-center px-6 pb-12 pt-32 sm:px-8 sm:pb-16 sm:pt-36 lg:px-10">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
+        <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-accent/20 blur-3xl" />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="relative z-10 w-full max-w-md py-6 sm:py-10"
       >
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 group mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gold flex items-center justify-center shadow-lg shadow-gold/30">
-              <Zap className="w-6 h-6 text-background fill-background" />
+            <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent/30">
+              <Zap className="w-6 h-6 text-white fill-white" />
             </div>
-            <span className="font-display font-bold text-xl text-white tracking-widest">CTP</span>
+            <span className="font-display font-bold text-xl text-foreground tracking-widest">CTP</span>
           </Link>
-          <h1 className="font-display font-bold text-3xl text-white mb-2">Join the hunt</h1>
-          <p className="text-white/50">Create your account and start chasing pulls</p>
+          <h1 className="font-display font-bold text-3xl text-foreground mb-2">Join the hunt</h1>
+          <p className="text-foreground/50">Create your account and start chasing pulls</p>
         </div>
 
-        <div className="rounded-2xl border border-surface-border bg-surface p-8 space-y-6">
+        <div className="space-y-6 rounded-2xl border border-surface-border bg-surface/85 p-8 shadow-2xl shadow-black/35 sm:p-10">
           <Button
             variant="outline"
             size="lg"
@@ -94,7 +94,7 @@ export default function RegisterPage() {
 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-surface-border" />
-            <span className="text-xs text-white/30 px-2">or</span>
+            <span className="text-xs text-foreground/30 px-2">or</span>
             <div className="flex-1 h-px bg-surface-border" />
           </div>
 
@@ -124,7 +124,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -154,17 +154,17 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <p className="text-xs text-center text-white/30">
+          <p className="text-xs text-center text-foreground/30">
             By creating an account, you agree to our{" "}
-            <Link href="/terms" className="text-gold hover:underline">Terms of Service</Link>{" "}
+            <Link href="/terms" className="text-accent hover:underline">Terms of Service</Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-gold hover:underline">Privacy Policy</Link>
+            <Link href="/privacy" className="text-accent hover:underline">Privacy Policy</Link>
           </p>
         </div>
 
-        <p className="text-center text-sm text-white/40 mt-6">
+        <p className="text-center text-sm text-foreground/40 mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-gold hover:text-gold-light transition-colors font-medium">Sign in</Link>
+          <Link href="/login" className="text-accent hover:text-accent-light transition-colors font-medium">Sign in</Link>
         </p>
       </motion.div>
     </div>

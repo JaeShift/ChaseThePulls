@@ -4,27 +4,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          "bg-gold text-background hover:bg-gold-light active:scale-95 shadow-lg shadow-gold/20",
+          "bg-accent text-white hover:bg-accent-light active:scale-95 shadow-md shadow-accent/20",
         destructive:
-          "bg-electric-red text-white hover:bg-red-400 shadow-lg shadow-red-500/20",
+          "bg-electric-red text-white hover:bg-red-500 shadow-md shadow-red-500/20",
         outline:
-          "border border-surface-border bg-transparent text-white hover:border-gold hover:text-gold hover:bg-gold/5",
+          "border border-surface-border bg-surface/80 text-foreground hover:border-accent/60 hover:text-foreground hover:bg-surface2",
         secondary:
-          "bg-surface2 text-white hover:bg-surface-border border border-surface-border",
+          "bg-surface2 text-foreground hover:bg-surface border border-surface-border",
         ghost:
-          "hover:bg-surface2 hover:text-gold text-white/80",
-        link: "text-gold underline-offset-4 hover:underline",
+          "hover:bg-surface2 hover:text-accent-light text-foreground/85",
+        link: "text-accent underline-offset-4 hover:underline",
         glow:
-          "bg-gold text-background hover:bg-gold-light shadow-[0_0_20px_rgba(255,215,0,0.4)] hover:shadow-[0_0_40px_rgba(255,215,0,0.6)] active:scale-95",
+          "bg-accent text-white hover:bg-accent-light shadow-lg shadow-accent/25 active:scale-95",
         gradient:
-          "bg-gradient-to-r from-gold via-orange-400 to-electric-red text-black font-bold hover:brightness-110 shadow-lg active:scale-95",
-        gold:
-          "bg-gold/10 text-gold border border-gold/30 hover:bg-gold/20 hover:border-gold/60 active:scale-95",
+          "bg-gradient-to-r from-accent via-violet-500 to-electric-red text-white font-bold hover:brightness-110 shadow-lg active:scale-95",
+        accent:
+          "bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 hover:border-accent/60 active:scale-95",
       },
       size: {
         default: "h-10 px-5 py-2",

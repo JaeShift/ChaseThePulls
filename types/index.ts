@@ -42,7 +42,7 @@ export type ProductSubcategory =
   | "TRADING_CARD_GAME"
   | "PLUSH"
   | "FUNKO"
-  | "MISCELLANEOUS";
+  | "CLOTHING";
 
 export type OrderStatus =
   | "PENDING"
@@ -133,7 +133,7 @@ export const CATEGORY_LABELS: Record<ProductCategory, string> = {
 };
 
 export const CATEGORY_COLORS: Record<ProductCategory, string> = {
-  BOOSTER_PACK: "#FFD700",
+  BOOSTER_PACK: "#6366F1",
   BOOSTER_BOX: "#22C55E",
   BOOSTER_BUNDLE: "#10B981",
   STARTER_STRUCTURE_DECK: "#A855F7",
@@ -148,7 +148,7 @@ export const CATEGORY_COLORS: Record<ProductCategory, string> = {
 };
 
 export const CATEGORY_BG: Record<ProductCategory, string> = {
-  BOOSTER_PACK: "rgba(255, 215, 0, 0.15)",
+  BOOSTER_PACK: "rgba(99, 102, 241, 0.14)",
   BOOSTER_BOX: "rgba(34, 197, 94, 0.15)",
   BOOSTER_BUNDLE: "rgba(16, 185, 129, 0.15)",
   STARTER_STRUCTURE_DECK: "rgba(168, 85, 247, 0.15)",
@@ -167,6 +167,22 @@ export const GAME_LABELS: Record<ProductGame, string> = {
   MAGIC_THE_GATHERING: "Magic: The Gathering",
   POKEMON: "Pokémon",
   YUGIOH: "Yu-Gi-Oh!",
+};
+
+/** Static logos in `public/images/` (franchise marks belong to their owners). */
+export const GAME_LOGO_SRC: Record<ProductGame, string> = {
+  ONE_PIECE: "/images/onepiece.png",
+  MAGIC_THE_GATHERING: "/images/Magic-The-Gathering-Logo-500x281.png",
+  POKEMON: "/images/pokemon-logo-png-1.png",
+  YUGIOH: "/images/yu8413y9a6-yu-gi-oh-logo-yu-gi-oh-logopedia-.png",
+};
+
+/** Scales to normalize perceived size (YGO art fills the box; others are padded in the PNGs). */
+export const GAME_LOGO_BALANCE: Record<ProductGame, number> = {
+  MAGIC_THE_GATHERING: 1.14,
+  POKEMON: 1.62,
+  ONE_PIECE: 1.52,
+  YUGIOH: 0.72,
 };
 
 export const GAME_COLORS: Record<ProductGame, string> = {

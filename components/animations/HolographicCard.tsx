@@ -16,7 +16,7 @@ interface Sparkle {
 const HOLO_COLORS = [
   "#ff0080",
   "#ff8c00",
-  "#ffd700",
+  "#6366f1",
   "#00ff80",
   "#00d4ff",
   "#8b5cf6",
@@ -87,7 +87,7 @@ export function HolographicCard({
             ${angle + 135}deg,
             rgba(255, 0, 128, 0.5) 0%,
             rgba(255, 140, 0, 0.45) 14%,
-            rgba(255, 215, 0, 0.5) 28%,
+            rgba(99, 102, 241, 0.45) 28%,
             rgba(0, 255, 128, 0.4) 43%,
             rgba(0, 212, 255, 0.45) 57%,
             rgba(139, 92, 246, 0.5) 71%,
@@ -105,7 +105,7 @@ export function HolographicCard({
 
       setGlowStyle({
         boxShadow: `
-          0 0 ${30 + Math.abs(rotateY) * 3}px rgba(255, 215, 0, 0.2),
+          0 0 ${30 + Math.abs(rotateY) * 3}px rgba(99, 102, 241, 0.22),
           0 ${20 + rotateX * 0.5}px ${60 + Math.abs(rotateX) * 2}px rgba(0, 0, 0, 0.7),
           inset 0 1px 0 rgba(255, 255, 255, 0.15)
         `,
