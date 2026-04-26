@@ -8,7 +8,7 @@ const GAMES: { game: ProductGame; blurb: string; scene: string }[] = [
     game: "MAGIC_THE_GATHERING",
     blurb: "Packs, boxes, Commander, and more.",
     scene:
-      "from-violet-950 via-slate-950 to-black before:bg-[radial-gradient(circle_at_72%_28%,rgba(168,85,247,0.55),transparent_34%)]",
+      "from-blue-950 via-slate-950 to-black before:bg-[radial-gradient(circle_at_72%_28%,rgba(34,211,238,0.42),transparent_34%)]",
   },
   {
     game: "POKEMON",
@@ -70,10 +70,10 @@ export function ShopByGameCards() {
                 >
                   {game === "MAGIC_THE_GATHERING" ? (
                     <Image
-                      src="/images/hour_of_devastation___magic_the_gathering_by_88grzes_dbddl3q-414w-2x.jpg"
+                      src="/images/Jace MTG New.png"
                       alt=""
                       fill
-                      className="scale-90 object-cover object-[center_28%] opacity-85 saturate-125 transition-transform duration-700 group-hover:scale-95"
+                      className="-translate-x-36 translate-y-16 scale-[2.05] object-contain object-right-bottom opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] transition-transform duration-700 group-hover:-translate-x-36 group-hover:translate-y-16 group-hover:scale-[2.14]"
                       sizes="(max-width: 640px) 100vw, 50vw"
                     />
                   ) : null}
@@ -93,7 +93,7 @@ export function ShopByGameCards() {
                         src="/images/Luffy.png"
                         alt=""
                         fill
-                        className="-translate-x-16 translate-y-4 scale-150 object-contain object-right-bottom opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.55)] transition-transform duration-700 group-hover:-translate-x-16 group-hover:translate-y-4 group-hover:scale-[1.58]"
+                        className="-translate-x-32 translate-y-4 scale-150 object-contain object-right-bottom opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.55)] transition-transform duration-700 group-hover:-translate-x-32 group-hover:translate-y-4 group-hover:scale-[1.58]"
                         sizes="(max-width: 640px) 100vw, 50vw"
                       />
                     </>
@@ -105,7 +105,7 @@ export function ShopByGameCards() {
                         src="/images/YuGiOh (2).png"
                         alt=""
                         fill
-                        className="translate-x-4 scale-95 object-cover object-center opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] transition-transform duration-700 group-hover:translate-x-4 group-hover:scale-100"
+                        className="translate-x-3 scale-90 object-cover object-[62%_center] opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] [mask-image:linear-gradient(to_right,transparent_0%,black_12%,black_88%,transparent_100%)] transition-transform duration-700 group-hover:translate-x-3 group-hover:scale-95"
                         sizes="(max-width: 640px) 100vw, 50vw"
                       />
                     </>
@@ -120,7 +120,7 @@ export function ShopByGameCards() {
                     <div className="absolute inset-0 bg-gradient-to-t from-amber-950/55 via-transparent to-cyan-950/15 mix-blend-multiply" aria-hidden />
                   ) : null}
                   {game === "MAGIC_THE_GATHERING" ? (
-                    <div className="absolute inset-0 bg-gradient-to-t from-violet-950/60 via-black/10 to-orange-950/20 mix-blend-multiply" aria-hidden />
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/65 via-cyan-950/10 to-slate-950/20 mix-blend-multiply" aria-hidden />
                   ) : null}
                   {game === "ONE_PIECE" ? (
                     <div className="absolute inset-0 bg-gradient-to-l from-red-950/15 via-transparent to-black/20" aria-hidden />

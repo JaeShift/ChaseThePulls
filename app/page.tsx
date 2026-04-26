@@ -68,13 +68,15 @@ function HeroArtwork() {
         <div className="absolute inset-0 bg-accent/15 mix-blend-multiply" aria-hidden />
       </div>
       <div className="absolute left-[12%] top-8 h-72 w-48 -rotate-12 overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 shadow-2xl shadow-accent/25 sm:h-80 sm:w-56">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_30%,rgba(255,255,255,0.22),transparent_28%),radial-gradient(circle_at_60%_62%,rgba(109,93,246,0.65),transparent_36%)]" />
-        <div className="absolute inset-x-5 top-8 rounded-2xl border border-white/10 bg-black/25 p-4 text-center font-display text-3xl font-bold tracking-tight text-yellow-300 shadow-inner">
-          Pokémon
-        </div>
-        <div className="absolute bottom-8 left-1/2 h-28 w-28 -translate-x-1/2 rounded-full border-[10px] border-white/70 bg-gradient-to-b from-red-500 via-red-500 to-white shadow-2xl shadow-black/50">
-          <div className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border-[6px] border-slate-900 bg-white" />
-        </div>
+        <Image
+          src="/images/Gengar card.jpg"
+          alt=""
+          fill
+          className="object-cover object-top brightness-90 saturate-115"
+          sizes="224px"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/10" aria-hidden />
+        <div className="absolute inset-0 bg-accent/10 mix-blend-multiply" aria-hidden />
       </div>
       <div className="absolute right-[14%] top-0 h-80 w-52 rotate-8 overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-orange-900 via-slate-950 to-black shadow-2xl shadow-black/60 sm:h-96 sm:w-64">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_38%,rgba(255,149,80,0.45),transparent_28%),linear-gradient(140deg,transparent_0%,rgba(139,124,255,0.25)_48%,transparent_52%)]" />
