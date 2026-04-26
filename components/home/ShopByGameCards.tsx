@@ -1,6 +1,6 @@
 import Link from "next/link"
+import Image from "next/image"
 import { ChevronRight, Sparkles } from "lucide-react"
-import { GameLogo } from "@/components/shop/GameLogo"
 import { GAME_COLORS, GAME_LABELS, type ProductGame } from "@/types"
 
 const GAMES: { game: ProductGame; blurb: string; scene: string }[] = [
@@ -68,21 +68,68 @@ export function ShopByGameCards() {
                   href={`/shop?game=${game}`}
                   className={`group relative flex min-h-[150px] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${scene} p-5 shadow-2xl shadow-black/25 transition-all duration-300 before:absolute before:inset-0 before:opacity-80 before:content-[''] hover:-translate-y-0.5 hover:border-white/20 hover:shadow-accent/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent/60 focus-visible:outline-offset-2 sm:min-h-[170px]`}
                 >
+                  {game === "MAGIC_THE_GATHERING" ? (
+                    <Image
+                      src="/images/hour_of_devastation___magic_the_gathering_by_88grzes_dbddl3q-414w-2x.jpg"
+                      alt=""
+                      fill
+                      className="scale-90 object-cover object-[center_28%] opacity-85 saturate-125 transition-transform duration-700 group-hover:scale-95"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                    />
+                  ) : null}
+                  {game === "POKEMON" ? (
+                    <Image
+                      src="/images/pikachu_by_clkc0415_dlgarmk-fullview.jpg"
+                      alt=""
+                      fill
+                      className="-scale-x-100 object-cover object-center opacity-80 saturate-125 transition-transform duration-700 group-hover:scale-105 group-hover:-scale-x-105"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                    />
+                  ) : null}
+                  {game === "ONE_PIECE" ? (
+                    <>
+                      <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-red-500/35 blur-3xl sm:h-44 sm:w-44" aria-hidden />
+                      <Image
+                        src="/images/Luffy.png"
+                        alt=""
+                        fill
+                        className="-translate-x-16 translate-y-4 scale-150 object-contain object-right-bottom opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.55)] transition-transform duration-700 group-hover:-translate-x-16 group-hover:translate-y-4 group-hover:scale-[1.58]"
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                      />
+                    </>
+                  ) : null}
+                  {game === "YUGIOH" ? (
+                    <>
+                      <div className="absolute bottom-0 right-0 h-36 w-36 rounded-full bg-purple-500/30 blur-3xl sm:h-48 sm:w-48" aria-hidden />
+                      <Image
+                        src="/images/YuGiOh (2).png"
+                        alt=""
+                        fill
+                        className="translate-x-4 scale-95 object-cover object-center opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] transition-transform duration-700 group-hover:translate-x-4 group-hover:scale-100"
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                      />
+                    </>
+                  ) : null}
                   <div
                     className="absolute inset-y-0 left-0 w-1.5"
                     style={{ background: `linear-gradient(180deg, ${accent} 0%, ${accent}cc 100%)` }}
                     aria-hidden
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" aria-hidden />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/5" aria-hidden />
+                  {game === "POKEMON" ? (
+                    <div className="absolute inset-0 bg-gradient-to-t from-amber-950/55 via-transparent to-cyan-950/15 mix-blend-multiply" aria-hidden />
+                  ) : null}
+                  {game === "MAGIC_THE_GATHERING" ? (
+                    <div className="absolute inset-0 bg-gradient-to-t from-violet-950/60 via-black/10 to-orange-950/20 mix-blend-multiply" aria-hidden />
+                  ) : null}
+                  {game === "ONE_PIECE" ? (
+                    <div className="absolute inset-0 bg-gradient-to-l from-red-950/15 via-transparent to-black/20" aria-hidden />
+                  ) : null}
+                  {game === "YUGIOH" ? (
+                    <div className="absolute inset-0 bg-gradient-to-l from-purple-950/20 via-transparent to-black/25" aria-hidden />
+                  ) : null}
                   <div className="relative z-10 flex w-full items-end justify-between gap-4">
                     <div className="min-w-0">
-                      <GameLogo
-                        game={game}
-                        heightClassName="h-10 sm:h-12"
-                        widthClassName="w-32 sm:w-40"
-                        className="mb-5 [filter:drop-shadow(0_4px_14px_rgba(0,0,0,0.65))]"
-                        sizes="160px"
-                      />
                       <h3 className="font-display text-xl font-bold tracking-tight text-foreground transition-colors duration-300 group-hover:text-accent-light">
                         {GAME_LABELS[game]}
                       </h3>

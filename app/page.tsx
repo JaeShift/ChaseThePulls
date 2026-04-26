@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowRight, Heart, Layers3, LockKeyhole, PackageCheck, ShieldCheck, Truck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal"
@@ -53,6 +54,19 @@ function HeroArtwork() {
   return (
     <div className="relative mx-auto min-h-[360px] w-full max-w-[620px] lg:min-h-[460px]">
       <div className="absolute inset-x-4 bottom-6 h-20 rounded-[100%] bg-accent/35 blur-3xl" aria-hidden />
+      <div className="absolute -right-8 top-4 h-[21rem] w-[34rem] overflow-hidden rounded-[2rem] border border-yellow-300/15 opacity-75 shadow-2xl shadow-yellow-500/10 sm:h-[25rem] lg:right-0">
+        <Image
+          src="/images/pikachu_by_clkc0415_dlgarmk-fullview.jpg"
+          alt=""
+          fill
+          priority
+          className="-scale-x-100 object-cover object-center saturate-125"
+          sizes="(max-width: 1024px) 90vw, 560px"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" aria-hidden />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" aria-hidden />
+        <div className="absolute inset-0 bg-accent/15 mix-blend-multiply" aria-hidden />
+      </div>
       <div className="absolute left-[12%] top-8 h-72 w-48 -rotate-12 overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 shadow-2xl shadow-accent/25 sm:h-80 sm:w-56">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_30%,rgba(255,255,255,0.22),transparent_28%),radial-gradient(circle_at_60%_62%,rgba(109,93,246,0.65),transparent_36%)]" />
         <div className="absolute inset-x-5 top-8 rounded-2xl border border-white/10 bg-black/25 p-4 text-center font-display text-3xl font-bold tracking-tight text-yellow-300 shadow-inner">
