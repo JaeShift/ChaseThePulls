@@ -56,7 +56,7 @@ function HeroArtwork() {
       <div className="absolute inset-x-4 bottom-6 h-20 rounded-[100%] bg-accent/35 blur-3xl" aria-hidden />
       <div className="absolute -right-8 top-4 h-[21rem] w-[34rem] overflow-hidden rounded-[2rem] border border-yellow-300/15 opacity-75 shadow-2xl shadow-yellow-500/10 sm:h-[25rem] lg:right-0">
         <Image
-          src="/images/pikachu_by_clkc0415_dlgarmk-fullview.jpg"
+          src="/images/PIKA.png"
           alt=""
           fill
           priority

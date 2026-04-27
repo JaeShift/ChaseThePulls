@@ -73,16 +73,16 @@ export function ShopByGameCards() {
                       src="/images/Jace MTG New.png"
                       alt=""
                       fill
-                      className="-translate-x-36 translate-y-16 scale-[2.05] object-contain object-right-bottom opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] transition-transform duration-700 group-hover:-translate-x-36 group-hover:translate-y-16 group-hover:scale-[2.14]"
+                      className="-translate-x-24 translate-y-16 scale-[2.05] object-contain object-right-bottom opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] transition-transform duration-700 group-hover:-translate-x-24 group-hover:translate-y-16 group-hover:scale-[2.14]"
                       sizes="(max-width: 640px) 100vw, 50vw"
                     />
                   ) : null}
                   {game === "POKEMON" ? (
                     <Image
-                      src="/images/pikachu_by_clkc0415_dlgarmk-fullview.jpg"
+                      src="/images/PIKA.png"
                       alt=""
                       fill
-                      className="-scale-x-100 object-cover object-center opacity-80 saturate-125 transition-transform duration-700 group-hover:scale-105 group-hover:-scale-x-105"
+                      className="-scale-x-100 translate-x-24 object-cover object-right opacity-80 saturate-125 transition-transform duration-700 group-hover:translate-x-24 group-hover:scale-105 group-hover:-scale-x-105"
                       sizes="(max-width: 640px) 100vw, 50vw"
                     />
                   ) : null}
