@@ -14,7 +14,7 @@ const GAMES: { game: ProductGame; blurb: string; scene: string }[] = [
     game: "POKEMON",
     blurb: "Booster packs, collections, and accessories.",
     scene:
-      "from-amber-950 via-slate-950 to-black before:bg-[radial-gradient(circle_at_78%_35%,rgba(250,204,21,0.5),transparent_34%)]",
+      "from-amber-950 via-slate-950 to-black before:bg-[radial-gradient(circle_at_78%_38%,rgba(71,55,20,0.45),transparent_40%)]",
   },
   {
     game: "ONE_PIECE",
@@ -70,7 +70,7 @@ export function ShopByGameCards() {
                 >
                   {game === "MAGIC_THE_GATHERING" ? (
                     <Image
-                      src="/images/Jace MTG New.png"
+                      src="/images/JACEUP.png"
                       alt=""
                       fill
                       className="-translate-x-24 translate-y-16 scale-[2.05] object-contain object-right-bottom opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] transition-transform duration-700 group-hover:-translate-x-24 group-hover:translate-y-16 group-hover:scale-[2.14]"
@@ -79,10 +79,10 @@ export function ShopByGameCards() {
                   ) : null}
                   {game === "POKEMON" ? (
                     <Image
-                      src="/images/PIKA.png"
+                      src="/images/Pikachu.png"
                       alt=""
                       fill
-                      className="-scale-x-100 translate-x-24 object-cover object-right opacity-80 saturate-125 transition-transform duration-700 group-hover:translate-x-24 group-hover:scale-105 group-hover:-scale-x-105"
+                      className="z-[1] -translate-x-16 translate-y-3 scale-[1.72] object-contain object-right-bottom opacity-[0.88] brightness-[0.78] contrast-[1.05] drop-shadow-[0_22px_40px_rgba(0,0,0,0.72)] saturate-[0.95] transition-transform duration-700 group-hover:-translate-x-16 group-hover:translate-y-3 group-hover:scale-[1.82] group-hover:brightness-[0.82]"
                       sizes="(max-width: 640px) 100vw, 50vw"
                     />
                   ) : null}
@@ -117,7 +117,16 @@ export function ShopByGameCards() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/5" aria-hidden />
                   {game === "POKEMON" ? (
-                    <div className="absolute inset-0 bg-gradient-to-t from-amber-950/55 via-transparent to-cyan-950/15 mix-blend-multiply" aria-hidden />
+                    <>
+                      <div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-black/30 to-black/[0.58]"
+                        aria-hidden
+                      />
+                      <div
+                        className="absolute inset-0 bg-gradient-to-l from-amber-950/18 via-transparent to-black/42"
+                        aria-hidden
+                      />
+                    </>
                   ) : null}
                   {game === "MAGIC_THE_GATHERING" ? (
                     <div className="absolute inset-0 bg-gradient-to-t from-blue-950/65 via-cyan-950/10 to-slate-950/20 mix-blend-multiply" aria-hidden />
