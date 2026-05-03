@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, Heart, Layers3, LockKeyhole, PackageCheck, ShieldCheck, Truck } from "lucide-react"
+import { ArrowRight, Heart, Layers3, PackageCheck, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal"
 import { ProductCard } from "@/components/shop/ProductCard"
@@ -20,12 +20,6 @@ async function getFeaturedProducts() {
     return []
   }
 }
-
-const trustBadges = [
-  { icon: ShieldCheck, label: "Authentic Products" },
-  { icon: LockKeyhole, label: "Secure Checkout" },
-  { icon: Truck, label: "Fast Shipping" },
-]
 
 const featureCards = [
   {
@@ -52,53 +46,17 @@ const featureCards = [
 
 function HeroArtwork() {
   return (
-    <div className="relative mx-auto min-h-[360px] w-full max-w-[620px] lg:min-h-[460px]">
-      <div className="absolute inset-x-4 bottom-6 h-20 rounded-[100%] bg-accent/35 blur-3xl" aria-hidden />
-      <div className="absolute -right-8 top-4 h-[21rem] w-[34rem] overflow-hidden rounded-[2rem] border border-yellow-300/15 opacity-75 shadow-2xl shadow-yellow-500/10 sm:h-[25rem] lg:right-0">
+    <div className="relative mx-auto w-full lg:-mr-16 lg:scale-[1.15] lg:origin-right">
+      <div className="relative">
         <Image
-          src="/images/lightning effect (1).png"
+          src="/images/landingpage.png"
           alt=""
-          fill
+          width={1100}
+          height={750}
           priority
-          className="scale-[1.2] object-cover object-[60%_center] saturate-125"
-          sizes="(max-width: 1024px) 90vw, 560px"
+          className="block h-auto w-full object-contain"
+          sizes="(max-width: 1024px) 100vw, 1100px"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" aria-hidden />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" aria-hidden />
-        <div className="absolute inset-0 bg-accent/15 mix-blend-multiply" aria-hidden />
-      </div>
-      <div className="absolute left-[12%] top-8 h-72 w-48 -rotate-12 overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 shadow-2xl shadow-accent/25 sm:h-80 sm:w-56">
-        <Image
-          src="/images/Gengar card.jpg"
-          alt=""
-          fill
-          className="object-cover object-top brightness-90 saturate-115"
-          sizes="224px"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/10" aria-hidden />
-        <div className="absolute inset-0 bg-accent/10 mix-blend-multiply" aria-hidden />
-      </div>
-      <div className="absolute right-[14%] top-0 h-80 w-52 rotate-8 overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-orange-900 via-slate-950 to-black shadow-2xl shadow-black/60 sm:h-96 sm:w-64">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_38%,rgba(255,149,80,0.45),transparent_28%),linear-gradient(140deg,transparent_0%,rgba(139,124,255,0.25)_48%,transparent_52%)]" />
-        <div className="absolute inset-x-6 top-12 font-display text-3xl font-bold leading-none text-white drop-shadow-lg">
-          MAGIC
-          <span className="block text-sm font-semibold tracking-[0.32em] text-white/60">THE GATHERING</span>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-black via-black/75 to-transparent" />
-      </div>
-      <div className="absolute bottom-7 right-4 h-56 w-36 rotate-12 overflow-hidden rounded-2xl border border-orange-300/25 bg-[radial-gradient(circle_at_center,#3B190A_0%,#140705_46%,#050205_100%)] shadow-2xl shadow-orange-900/30 sm:right-8 sm:h-64 sm:w-44">
-        <div className="absolute inset-5 rounded-full border-[10px] border-orange-500/70 blur-[1px]" />
-        <div className="absolute inset-9 rounded-full border-[7px] border-yellow-300/60 blur-[1px]" />
-      </div>
-      <div className="absolute bottom-0 left-4 right-4 rounded-2xl border border-white/10 bg-surface/80 p-3 shadow-2xl shadow-black/60 backdrop-blur-md sm:left-20 sm:right-8">
-        <div className="grid grid-cols-3 gap-2">
-          {trustBadges.map(({ icon: Icon, label }) => (
-            <div key={label} className="flex items-center gap-2 rounded-xl bg-background/70 px-3 py-3 text-xs font-semibold text-foreground/80">
-              <Icon className="h-4 w-4 text-accent-light" aria-hidden />
-              <span>{label}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   )
@@ -123,7 +81,7 @@ export default async function HomePage() {
           aria-hidden
         />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-36 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:pb-24 lg:pt-40">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-36 lg:grid-cols-[0.7fr_1.3fr] lg:px-8 lg:pb-24 lg:pt-40">
           <div className="max-w-2xl">
             <p className="font-display text-sm font-bold uppercase tracking-[0.24em] text-accent-light">
               Chase The Pulls

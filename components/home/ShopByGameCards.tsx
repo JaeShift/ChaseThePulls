@@ -79,10 +79,10 @@ export function ShopByGameCards() {
                   ) : null}
                   {game === "POKEMON" ? (
                     <Image
-                      src="/images/Pikachu.png"
+                      src="/images/lightning effect (1).png"
                       alt=""
                       fill
-                      className="z-[1] -translate-x-16 translate-y-3 scale-[1.72] object-contain object-right-bottom opacity-[0.88] brightness-[0.78] contrast-[1.05] drop-shadow-[0_22px_40px_rgba(0,0,0,0.72)] saturate-[0.95] transition-transform duration-700 group-hover:-translate-x-16 group-hover:translate-y-3 group-hover:scale-[1.82] group-hover:brightness-[0.82]"
+                      className="z-[1] -translate-x-[28%] translate-y-3 scale-[1.72] object-contain object-right-bottom opacity-[0.88] brightness-[0.78] contrast-[1.05] drop-shadow-[0_22px_40px_rgba(0,0,0,0.72)] saturate-[0.95] transition-transform duration-700 group-hover:-translate-x-[28%] group-hover:translate-y-3 group-hover:scale-[1.82] group-hover:brightness-[0.82]"
                       sizes="(max-width: 640px) 100vw, 50vw"
                     />
                   ) : null}
@@ -105,16 +105,11 @@ export function ShopByGameCards() {
                         src="/images/YuGiOh (2).png"
                         alt=""
                         fill
-                        className="translate-x-3 scale-90 object-cover object-[62%_center] opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] [mask-image:linear-gradient(to_right,transparent_0%,black_12%,black_88%,transparent_100%)] transition-transform duration-700 group-hover:translate-x-3 group-hover:scale-95"
+                        className="translate-x-3 scale-100 object-cover object-[62%_center] opacity-90 drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)] [mask-image:linear-gradient(to_right,transparent_0%,black_12%,black_88%,transparent_100%)] transition-transform duration-700 group-hover:translate-x-3 group-hover:scale-105"
                         sizes="(max-width: 640px) 100vw, 50vw"
                       />
                     </>
                   ) : null}
-                  <div
-                    className="absolute inset-y-0 left-0 w-1.5"
-                    style={{ background: `linear-gradient(180deg, ${accent} 0%, ${accent}cc 100%)` }}
-                    aria-hidden
-                  />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/5" aria-hidden />
                   {game === "POKEMON" ? (
                     <>
