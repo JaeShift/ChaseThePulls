@@ -46,15 +46,27 @@ const featureCards = [
 
 function HeroArtwork() {
   return (
-    <div className="relative mx-auto w-full lg:-mr-16 lg:scale-[1.15] lg:origin-right">
+    <div className="relative mx-auto mt-8 w-full max-w-[680px] lg:mt-0 lg:max-w-none lg:-mr-20 lg:origin-right">
+      <div
+        className="pointer-events-none absolute right-2 top-1/2 h-[70%] w-[70%] -translate-y-1/2 rounded-full bg-accent/25 blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute bottom-6 right-8 h-40 w-[72%] rounded-full bg-electric-cyan/10 blur-3xl"
+        aria-hidden
+      />
       <div className="relative">
+        <div
+          className="pointer-events-none absolute bottom-0 left-[12%] h-24 w-[76%] rounded-full bg-black/85 blur-2xl"
+          aria-hidden
+        />
         <Image
-          src="/images/landingpage.png"
+          src="/images/landingpageupdate.png"
           alt=""
           width={1100}
           height={750}
           priority
-          className="block h-auto w-full object-contain"
+          className="relative block h-auto max-h-[420px] w-full object-contain drop-shadow-[0_44px_34px_rgba(0,0,0,0.9)] sm:max-h-[560px] lg:max-h-none"
           sizes="(max-width: 1024px) 100vw, 1100px"
         />
       </div>
@@ -81,19 +93,19 @@ export default async function HomePage() {
           aria-hidden
         />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-36 lg:grid-cols-[0.7fr_1.3fr] lg:px-8 lg:pb-24 lg:pt-40">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-36 lg:grid-cols-[0.68fr_1.32fr] lg:gap-10 lg:px-8 lg:pb-24 lg:pt-40">
           <div className="max-w-2xl">
             <p className="font-display text-sm font-bold uppercase tracking-[0.24em] text-accent-light">
               Chase The Pulls
             </p>
             <h1 className="mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-foreground text-balance sm:text-6xl lg:text-7xl">
-              Sealed trading cards &amp; accessories,
-              <span className="block text-accent-light glow-accent">ready to ship.</span>
+              Pull heat.
+              <span className="block text-accent-light glow-accent">Ship fast.</span>
             </h1>
             <div className="mt-6 h-1 w-24 rounded-full bg-gradient-to-r from-accent via-accent-light to-electric-cyan" aria-hidden />
             <p className="mt-7 max-w-xl text-base leading-relaxed text-foreground/66 sm:text-lg">
-              Shop Magic: The Gathering, Pokémon, One Piece, and Yu-Gi-Oh! in one place. New releases
-              and staple sealed product with clear photos, stock levels, and secure checkout.
+              Sealed trading cards, accessories, and collector gear — stocked, ready, and shipped
+              with care.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button variant="glow" size="lg" className="justify-center rounded-xl shadow-lg shadow-accent/25" asChild>
