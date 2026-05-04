@@ -14,7 +14,7 @@ const CATEGORY_QUICK_LINKS: { href: string; label: string }[] = [
   { href: "/shop?subcategory=TRADING_CARD_GAME", label: "Trading cards" },
   { href: "/shop?subcategory=PLUSH", label: "Plush" },
   { href: "/shop?subcategory=CLOTHING", label: "Clothing" },
-  { href: "/shop?category=ACCESSORIES", label: "Accessories" },
+  { href: "/shop?subcategory=ACCESSORIES", label: "Accessories" },
   { href: "/shop?subcategory=FUNKO", label: "Funko" },
 ]
 

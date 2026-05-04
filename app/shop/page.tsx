@@ -18,14 +18,16 @@ const PRODUCT_SUBCATEGORIES: ProductSubcategory[] = [
   "TRADING_CARD_GAME",
   "PLUSH",
   "CLOTHING",
+  "ACCESSORIES",
   "FUNKO",
 ]
 
 const SUBCATEGORY_SHOP_HEADINGS: Record<ProductSubcategory, string> = {
   TRADING_CARD_GAME: "Trading card games",
-  PLUSH: "Plush & soft goods",
+  PLUSH: "Plushies",
   CLOTHING: "Clothing",
-  FUNKO: "Funko & vinyl",
+  ACCESSORIES: "Accessories",
+  FUNKO: "Funko",
 }
 
 export const metadata: Metadata = {

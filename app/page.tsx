@@ -99,8 +99,8 @@ export default async function HomePage() {
               Chase The Pulls
             </p>
             <h1 className="mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-foreground text-balance sm:text-6xl lg:text-7xl">
-              Pull heat.
-              <span className="block text-accent-light glow-accent">Ship fast.</span>
+              Ship fast.
+              <span className="block text-accent-light glow-accent">Pull heat.</span>
             </h1>
             <div className="mt-6 h-1 w-24 rounded-full bg-gradient-to-r from-accent via-accent-light to-electric-cyan" aria-hidden />
             <p className="mt-7 max-w-xl text-base leading-relaxed text-foreground/66 sm:text-lg">

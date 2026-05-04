@@ -9,24 +9,28 @@ export const SUBTABS_BY_GAME: Record<
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
     { value: "CLOTHING", label: "Clothing" },
+    { value: "ACCESSORIES", label: "Accessories" },
     { value: "FUNKO", label: "Funkos" },
   ],
   ONE_PIECE: [
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
     { value: "CLOTHING", label: "Clothing" },
+    { value: "ACCESSORIES", label: "Accessories" },
     { value: "FUNKO", label: "Funkos" },
   ],
   MAGIC_THE_GATHERING: [
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
     { value: "CLOTHING", label: "Clothing" },
+    { value: "ACCESSORIES", label: "Accessories" },
     { value: "FUNKO", label: "Funkos" },
   ],
   YUGIOH: [
     { value: "TRADING_CARD_GAME", label: "Trading Card Game" },
     { value: "PLUSH", label: "Plush" },
     { value: "CLOTHING", label: "Clothing" },
+    { value: "ACCESSORIES", label: "Accessories" },
     { value: "FUNKO", label: "Funkos" },
   ],
 }
@@ -42,11 +46,13 @@ const SUBCATEGORY_FALLBACK_LABELS: Record<ProductSubcategory, string> = {
   PLUSH: "Plush",
   FUNKO: "Funkos",
   CLOTHING: "Clothing",
+  ACCESSORIES: "Accessories",
 }
 
 export const ALL_SUBCATEGORIES: ProductSubcategory[] = [
   "TRADING_CARD_GAME",
   "PLUSH",
   "CLOTHING",
+  "ACCESSORIES",
   "FUNKO",
 ]

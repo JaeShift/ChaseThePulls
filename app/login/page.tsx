@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Eye, EyeOff, Zap, Chrome } from "lucide-react"
+import { AlertCircle, Eye, EyeOff, Zap, Chrome } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,6 +21,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -28,6 +29,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginInput) => {
     setLoading(true)
+    setLoginError(null)
     try {
       const result = await signIn("credentials", {
         email: data.email,
@@ -35,12 +37,18 @@ export default function LoginPage() {
         redirect: false,
       })
 
-      if (result?.error) {
-        toast({ title: "Invalid credentials", description: "Check your email and password.", variant: "destructive" })
+      if (result?.error || !result?.ok) {
+        const message = "Login unsuccessful. Please check your email and password."
+        setLoginError(message)
+        toast({ title: "Login unsuccessful", description: message, variant: "destructive" })
       } else {
         router.push(callbackUrl)
         router.refresh()
       }
+    } catch {
+      const message = "Login unsuccessful. Please try again."
+      setLoginError(message)
+      toast({ title: "Login unsuccessful", description: message, variant: "destructive" })
     } finally {
       setLoading(false)
     }
@@ -103,6 +111,16 @@ export default function LoginPage() {
 
           {/* Email/Password Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {loginError ? (
+              <div
+                role="alert"
+                className="flex gap-2 rounded-xl border border-electric-red/30 bg-electric-red/10 p-3 text-sm text-foreground"
+              >
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-electric-red" />
+                <p>{loginError}</p>
+              </div>
+            ) : null}
+
             <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>
               <Input

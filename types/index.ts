@@ -10,7 +10,12 @@ export type ProductCategory =
   | "UPC"
   | "SPC"
   | "TIN"
-  | "BOXED_SET";
+  | "BOXED_SET"
+  | "CARD_BINDER"
+  | "TOP_LOADER"
+  | "CARD_SLEEVES"
+  | "PLAYMAT"
+  | "DECK_BOX";
 
 /** Every DB category (for URL / API validation). */
 export const PRODUCT_CATEGORY_LIST: readonly ProductCategory[] = [
@@ -26,6 +31,11 @@ export const PRODUCT_CATEGORY_LIST: readonly ProductCategory[] = [
   "SPC",
   "TIN",
   "BOXED_SET",
+  "CARD_BINDER",
+  "TOP_LOADER",
+  "CARD_SLEEVES",
+  "PLAYMAT",
+  "DECK_BOX",
 ];
 
 export function isProductCategory(s: string): s is ProductCategory {
@@ -42,7 +52,8 @@ export type ProductSubcategory =
   | "TRADING_CARD_GAME"
   | "PLUSH"
   | "FUNKO"
-  | "CLOTHING";
+  | "CLOTHING"
+  | "ACCESSORIES";
 
 export type OrderStatus =
   | "PENDING"
@@ -63,12 +74,37 @@ export interface Product {
   price: number;
   comparePrice?: number | null;
   images: string[];
+  sourceUrl?: string | null;
+  referenceImages: string[];
   game: ProductGame;
   subcategory: ProductSubcategory;
   category: ProductCategory;
   stock: number;
   featured: boolean;
   set?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface DraftProduct {
+  id: string;
+  name?: string | null;
+  slug?: string | null;
+  description?: string | null;
+  details?: string | null;
+  price?: number | null;
+  comparePrice?: number | null;
+  images: string[];
+  sourceUrl?: string | null;
+  referenceImages: string[];
+  referenceImageVariants?: { name: string; images: string[] }[] | null;
+  game: ProductGame;
+  subcategory: ProductSubcategory;
+  category: ProductCategory;
+  stock?: number | null;
+  featured: boolean;
+  set?: string | null;
+  localFolderPath?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -130,6 +166,11 @@ export const CATEGORY_LABELS: Record<ProductCategory, string> = {
   SPC: "Special Collection",
   TIN: "Tin",
   BOXED_SET: "Boxed Set",
+  CARD_BINDER: "Card Binder",
+  TOP_LOADER: "Top Loader",
+  CARD_SLEEVES: "Card Sleeves",
+  PLAYMAT: "Playmat",
+  DECK_BOX: "Deck Box",
 };
 
 export const CATEGORY_COLORS: Record<ProductCategory, string> = {
@@ -145,6 +186,11 @@ export const CATEGORY_COLORS: Record<ProductCategory, string> = {
   SPC: "#EC4899",
   TIN: "#F59E0B",
   BOXED_SET: "#0EA5E9",
+  CARD_BINDER: "#38BDF8",
+  TOP_LOADER: "#14B8A6",
+  CARD_SLEEVES: "#A3E635",
+  PLAYMAT: "#F97316",
+  DECK_BOX: "#64748B",
 };
 
 export const CATEGORY_BG: Record<ProductCategory, string> = {
@@ -160,6 +206,11 @@ export const CATEGORY_BG: Record<ProductCategory, string> = {
   SPC: "rgba(236, 72, 153, 0.15)",
   TIN: "rgba(245, 158, 11, 0.15)",
   BOXED_SET: "rgba(14, 165, 233, 0.15)",
+  CARD_BINDER: "rgba(56, 189, 248, 0.15)",
+  TOP_LOADER: "rgba(20, 184, 166, 0.15)",
+  CARD_SLEEVES: "rgba(163, 230, 53, 0.15)",
+  PLAYMAT: "rgba(249, 115, 22, 0.15)",
+  DECK_BOX: "rgba(100, 116, 139, 0.15)",
 };
 
 export const GAME_LABELS: Record<ProductGame, string> = {

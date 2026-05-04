@@ -9,7 +9,7 @@ export function Footer() {
     { label: "Trading Cards", href: "/shop?subcategory=TRADING_CARD_GAME" },
     { label: "Plush", href: "/shop?subcategory=PLUSH" },
     { label: "Clothing", href: "/shop?subcategory=CLOTHING" },
-    { label: "Accessories", href: "/shop?category=ACCESSORIES" },
+    { label: "Accessories", href: "/shop?subcategory=ACCESSORIES" },
     { label: "Funko", href: "/shop?subcategory=FUNKO" },
   ]
 

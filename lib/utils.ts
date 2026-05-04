@@ -31,3 +31,21 @@ export function truncate(str: string, length: number): string {
 export function getDiscountPercent(price: number, comparePrice: number): number {
   return Math.round(((comparePrice - price) / comparePrice) * 100);
 }
+
+/** Groups the same Amazon listing photo across different size/transcode URLs (client + server). */
+export function amazonMediaImageKey(url: string): string | null {
+  try {
+    const trimmed = url.trim();
+    if (!trimmed.includes("m.media-amazon.com/images/I/")) return null;
+    const pathname = new URL(trimmed).pathname;
+    const match = pathname.match(/\/images\/I\/([^/]+)$/i);
+    if (!match) return null;
+    const stem = match[1]
+      .replace(/\._[^_]+_/gi, "")
+      .replace(/\.(jpe?g|png|webp|avif)$/i, "")
+      .toLowerCase();
+    return stem || null;
+  } catch {
+    return null;
+  }
+}

@@ -33,6 +33,11 @@ enum ProductCategory {
   SPC
   TIN
   BOXED_SET
+  CARD_BINDER
+  TOP_LOADER
+  CARD_SLEEVES
+  PLAYMAT
+  DECK_BOX
 }
 
 enum ProductGame {
@@ -47,6 +52,7 @@ enum ProductSubcategory {
   PLUSH
   FUNKO
   CLOTHING
+  ACCESSORIES
 }
 
 enum PokemonPlushCharacter {
@@ -121,6 +127,8 @@ model Product {
   price        Float
   comparePrice Float?
   images       String[]
+  sourceUrl    String?
+  referenceImages String[] @default([])
   game          ProductGame        @default(POKEMON)
   subcategory   ProductSubcategory @default(TRADING_CARD_GAME)
   category      ProductCategory
@@ -136,6 +144,29 @@ model Product {
   cartItems    CartItem[]
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
+}
+
+model DraftProduct {
+  id              String             @id @default(cuid())
+  name            String?
+  slug            String?
+  description     String?
+  details         String?
+  price           Float?
+  comparePrice    Float?
+  images          String[]           @default([])
+  sourceUrl       String?
+  referenceImages String[]           @default([])
+  referenceImageVariants Json?
+  game            ProductGame        @default(POKEMON)
+  subcategory     ProductSubcategory @default(TRADING_CARD_GAME)
+  category        ProductCategory    @default(ACCESSORIES)
+  stock           Int?
+  featured        Boolean            @default(false)
+  set             String?
+  localFolderPath String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 }
 
 model Cart {
