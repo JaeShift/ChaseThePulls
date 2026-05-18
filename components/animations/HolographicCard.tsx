@@ -132,9 +132,10 @@ export function HolographicCard({
   }, [addSparkle])
 
   const handleMouseEnter = useCallback(() => {
+    if (disabled) return
     isHovering.current = true
     startSparkleInterval()
-  }, [startSparkleInterval])
+  }, [disabled, startSparkleInterval])
 
   const handleMouseLeave = useCallback(() => {
     isHovering.current = false

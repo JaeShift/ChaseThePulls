@@ -4,7 +4,20 @@ import { useLayoutEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Upload, X, Loader2, AlertCircle, ExternalLink, Copy } from "lucide-react"
+import {
+  Upload,
+  X,
+  Loader2,
+  AlertCircle,
+  ExternalLink,
+  Copy,
+  FlipHorizontal,
+  Sparkles,
+  ZoomIn,
+  ZoomOut,
+  Scissors,
+} from "lucide-react"
+import { ImageObjectSelector } from "@/components/admin/ImageObjectSelector"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,6 +26,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/use-toast"
 import { productSchema, type ProductInput } from "@/lib/validations"
 import { amazonMediaImageKey, slugify } from "@/lib/utils"
+import { getProductImageZoom, updateProductImageZoom, PRODUCT_IMAGE_ZOOM_MAX } from "@/lib/product-image-adjustments"
+import { IMPORT_LINK_SOURCE_OPTIONS, type ImportLinkSource } from "@/lib/import-link-source"
 import { SUBTABS_BY_GAME } from "@/lib/game-subtabs"
 import { CATEGORY_LABELS, GAME_LABELS, type ProductGame } from "@/types"
 import type { DraftProduct, Product } from "@/types"
@@ -167,6 +182,35 @@ function subcategoryForProductCategory(category: ProductCategoryValue): ProductI
   return "TRADING_CARD_GAME"
 }
 
+function toggleCloudinaryHorizontalFlip(url: string): string | null {
+  try {
+    const parsed = new URL(url)
+    const uploadSegment = "/upload/"
+    const uploadIndex = parsed.pathname.indexOf(uploadSegment)
+
+    if (!parsed.hostname.endsWith("cloudinary.com") || uploadIndex === -1) {
+      return null
+    }
+
+    const beforeUpload = parsed.pathname.slice(0, uploadIndex + uploadSegment.length)
+    const afterUpload = parsed.pathname.slice(uploadIndex + uploadSegment.length)
+    const parts = afterUpload.split("/")
+    const flipIndex = parts.indexOf("a_hflip")
+
+    if (flipIndex >= 0) {
+      parts.splice(flipIndex, 1)
+    } else {
+      const versionIndex = parts.findIndex((part) => /^v\d+$/.test(part))
+      parts.splice(versionIndex >= 0 ? versionIndex : 0, 0, "a_hflip")
+    }
+
+    parsed.pathname = `${beforeUpload}${parts.filter(Boolean).join("/")}`
+    return parsed.toString()
+  } catch {
+    return null
+  }
+}
+
 function isAmazonProductUrl(value: string | null | undefined): boolean {
   if (!value) return false
   try {
@@ -188,12 +232,15 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
   const [saving, setSaving] = useState(false)
   const [draftSaving, setDraftSaving] = useState(false)
   const [importUrl, setImportUrl] = useState(record?.sourceUrl ?? "")
+  const [importLinkSource, setImportLinkSource] = useState<ImportLinkSource>("amazon")
   const [importing, setImporting] = useState(false)
   const [rewritingDetails, setRewritingDetails] = useState(false)
   const [batchDrafting, setBatchDrafting] = useState(false)
   const [batchDraftItems, setBatchDraftItems] = useState<BatchDraftItem[]>([])
   const [importError, setImportError] = useState<string | null>(null)
   const [categoryManuallyChanged, setCategoryManuallyChanged] = useState(false)
+  const [shadowingImageIndex, setShadowingImageIndex] = useState<number | null>(null)
+  const [cropImageIndex, setCropImageIndex] = useState<number | null>(null)
   const [referenceImageVariants, setReferenceImageVariants] = useState<ReferenceImageVariant[]>(
     () => (Array.isArray(draft?.referenceImageVariants) ? draft.referenceImageVariants : [])
   )
@@ -227,6 +274,8 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
   }, [imageState.remotes, setValue])
 
   const name = watch("name")
+  const selectedCategory = (watch("category") ?? "BOOSTER_PACK") as ProductCategoryValue
+  const imagePreviewClassName = "absolute inset-0 h-full w-full object-contain"
   const selectedGame = (watch("game") ?? "POKEMON") as ProductGame
   const subtabOptions = SUBTABS_BY_GAME[selectedGame]
   const referenceImages = watch("referenceImages") ?? []
@@ -451,11 +500,15 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
     setDraggingImages(false)
 
     if (uploading) return
-    const files = Array.from(e.dataTransfer.files)
-    const droppedSources: UploadImageSource[] = [
-      ...files.filter(isImageFile).map((file) => ({ kind: "file" as const, file })),
-      ...imageUrlsFromDrop(e.dataTransfer).map((url) => ({ kind: "url" as const, url })),
-    ]
+
+    const imageFiles = Array.from(e.dataTransfer.files).filter(isImageFile)
+
+    // Prefer File objects when present — browsers often populate both File + URL
+    // representations for the same dragged image, which would cause duplicate uploads.
+    const droppedSources: UploadImageSource[] = imageFiles.length > 0
+      ? imageFiles.map((file) => ({ kind: "file" as const, file }))
+      : imageUrlsFromDrop(e.dataTransfer).map((url) => ({ kind: "url" as const, url }))
+
     await uploadImageSources(droppedSources)
   }
 
@@ -464,6 +517,115 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
       ...prev,
       remotes: prev.remotes.filter((_, i) => i !== index),
     }))
+  }
+
+  const flipImageHorizontally = (index: number) => {
+    setImageState((prev) => {
+      const currentUrl = prev.remotes[index]
+      if (!currentUrl) return prev
+
+      const flippedUrl = toggleCloudinaryHorizontalFlip(currentUrl)
+      if (!flippedUrl) {
+        toast({
+          title: "Could not flip image",
+          description: "Only uploaded Cloudinary product images can be flipped.",
+          variant: "destructive",
+        })
+        return prev
+      }
+
+      return {
+        ...prev,
+        remotes: prev.remotes.map((img, i) => (i === index ? flippedUrl : img)),
+      }
+    })
+  }
+
+  const zoomImage = (index: number, direction: 1 | -1) => {
+    setImageState((prev) => {
+      const currentUrl = prev.remotes[index]
+      if (!currentUrl) return prev
+
+      const zoomedUrl = updateProductImageZoom(currentUrl, direction)
+
+      return {
+        ...prev,
+        remotes: prev.remotes.map((img, i) => (i === index ? zoomedUrl : img)),
+      }
+    })
+  }
+
+  const addObjectShadow = async (index: number) => {
+    const currentUrl = imageState.remotes[index]
+    if (!currentUrl) return
+
+    setShadowingImageIndex(index)
+    try {
+      const res = await fetch("/api/admin/product-image-shadow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl: currentUrl }),
+      })
+      const data = (await res.json()) as { url?: string; error?: string }
+
+      if (!res.ok || !data.url) {
+        toast({
+          title: "Could not add object shadow",
+          description: data.error ?? "Try another photo with a plain white background.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      setImageState((prev) => ({
+        ...prev,
+        remotes: prev.remotes.map((img, i) => (i === index ? data.url! : img)),
+      }))
+      toast({
+        title: "Object shadow added",
+        description: "The product image was rebuilt and uploaded with a shadow behind the object.",
+        variant: "success",
+      })
+    } catch {
+      toast({
+        title: "Could not add object shadow",
+        description: "Network error while processing the image.",
+        variant: "destructive",
+      })
+    } finally {
+      setShadowingImageIndex(null)
+    }
+  }
+
+  const cropImageToSelection = async (
+    selection: { x: number; y: number; width: number; height: number }
+  ) => {
+    if (cropImageIndex === null) return
+    const currentUrl = imageState.remotes[cropImageIndex]
+    if (!currentUrl) return
+
+    const res = await fetch("/api/admin/product-image-crop", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ imageUrl: currentUrl, selection }),
+    })
+    const data = (await res.json()) as { url?: string; error?: string }
+
+    if (!res.ok || !data.url) {
+      toast({
+        title: "Crop failed",
+        description: data.error ?? "Could not process the image.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setImageState((prev) => ({
+      ...prev,
+      remotes: prev.remotes.map((img, i) => (i === cropImageIndex ? data.url! : img)),
+    }))
+    toast({ title: "Image cropped", description: "Background replaced with white.", variant: "success" })
+    setCropImageIndex(null)
   }
 
   const dismissPending = (pendingId: string) => {
@@ -500,7 +662,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
         const res = await fetch("/api/admin/scrape-product", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, source: importLinkSource }),
         })
         const data = (await res.json()) as { draft?: ScrapedProductDraft; error?: string }
 
@@ -599,7 +761,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
       const res = await fetch("/api/admin/scrape-product", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, source: importLinkSource }),
       })
       const data = (await res.json()) as { draft?: ScrapedProductDraft; error?: string }
 
@@ -665,7 +827,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
     const scrapeRes = await fetch("/api/admin/scrape-product", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url, source: importLinkSource }),
     })
     const scrapeData = (await scrapeRes.json()) as { draft?: ScrapedProductDraft; error?: string }
     if (!scrapeRes.ok || !scrapeData.draft) {
@@ -936,12 +1098,32 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
         <div>
           <h2 className="font-semibold text-foreground">Import Product Details</h2>
           <p className="mt-1 text-sm text-foreground/45">
-            Paste a public product URL to collect draft text and reference-only photos. Reference photos
-            are not shown on the storefront.
+            Choose <strong className="text-foreground/60">Amazon</strong> or{" "}
+            <strong className="text-foreground/60">Ultra PRO / Ultra Gaming</strong>, then paste product URLs
+            from that site only. Imported text and reference photos are drafts only.
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <div className="space-y-1.5 w-full shrink-0 sm:w-56">
+            <Label htmlFor="import-link-source">Import from site</Label>
+            <Select
+              value={importLinkSource}
+              onValueChange={(v) => setImportLinkSource(v as ImportLinkSource)}
+              disabled={importing || batchDrafting}
+            >
+              <SelectTrigger id="import-link-source">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {IMPORT_LINK_SOURCE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <Textarea
             value={importUrl}
             onChange={(e) => setImportUrl(e.target.value)}
@@ -1025,9 +1207,28 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                         <div className="space-y-2">
                           <div className="flex items-center justify-between gap-3">
                             <Label>Reference Photos</Label>
-                            <span className="text-xs text-foreground/40">
-                              {batchDraftImages(item).length} photo{batchDraftImages(item).length === 1 ? "" : "s"}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-foreground/40">
+                                {batchDraftImages(item).length} photo{batchDraftImages(item).length === 1 ? "" : "s"}
+                              </span>
+                              {batchDraftImages(item).length > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setBatchDraftItems((prev) =>
+                                      prev.map((d) =>
+                                        d === item
+                                          ? { ...d, referenceImages: [], referenceImageVariants: [] }
+                                          : d
+                                      )
+                                    )
+                                  }
+                                  className="rounded border border-electric-red/30 bg-electric-red/10 px-2 py-0.5 text-xs font-medium text-electric-red hover:bg-electric-red/20 transition-colors"
+                                >
+                                  Delete All
+                                </button>
+                              )}
+                            </div>
                           </div>
                           <div className="grid max-w-4xl grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
                             {batchDraftImages(item)
@@ -1210,7 +1411,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
             <div className="space-y-1.5">
               <Label>Product type</Label>
               <Select
-                value={watch("category") ?? "BOOSTER_PACK"}
+                value={selectedCategory}
                 onValueChange={(val) => {
                   const category = val as ProductCategoryValue
                   setCategoryManuallyChanged(true)
@@ -1245,10 +1446,68 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
               {images.map((img, i) => (
                 <div
                   key={`img-${i}-${img.slice(-32)}`}
-                  className="relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl overflow-hidden border border-surface-border bg-surface2 group"
+                  className="relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl border border-surface-border bg-white group overflow-hidden"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                  <img
+                    src={img}
+                    alt=""
+                    className={`${imagePreviewClassName} z-[1]`}
+                    style={{ transform: `scale(${(getProductImageZoom(img) * 1.3).toFixed(3)})` }}
+                  />
+                  <div className="absolute top-2 left-2 z-10 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button
+                      type="button"
+                      onClick={() => flipImageHorizontally(i)}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
+                      aria-label="Flip image horizontally"
+                      title="Flip horizontally"
+                    >
+                      <FlipHorizontal className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => zoomImage(i, 1)}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
+                      aria-label="Zoom image in"
+                      title="Zoom in"
+                    >
+                      <ZoomIn className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => zoomImage(i, -1)}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
+                      aria-label="Zoom image out"
+                      title="Zoom out"
+                    >
+                      <ZoomOut className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addObjectShadow(i)}
+                      disabled={shadowingImageIndex !== null}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+                      aria-label="Add shadow to object"
+                      title="Add object shadow"
+                    >
+                      {shadowingImageIndex === i ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Sparkles className="h-4 w-4" />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCropImageIndex(i)}
+                      disabled={shadowingImageIndex !== null}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+                      aria-label="Select object to keep"
+                      title="Select object (white out rest)"
+                    >
+                      <Scissors className="h-4 w-4" />
+                    </button>
+                  </div>
                   <button
                     type="button"
                     onClick={() => removeImage(i)}
@@ -1261,13 +1520,16 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                       Main
                     </span>
                   )}
+                  <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-xs bg-black/60 text-white font-mono z-10 select-none">
+                    {getProductImageZoom(img).toFixed(1)}<span className="opacity-50">/{PRODUCT_IMAGE_ZOOM_MAX}</span>
+                  </span>
                 </div>
               ))}
 
               {pendingUploads.map(({ id, preview, status }) => (
                 <div
                   key={id}
-                  className={`relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl overflow-hidden border bg-surface2 ring-1 ${
+                  className={`relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl overflow-hidden border bg-white ring-1 ${
                     status === "failed"
                       ? "border-electric-red/50 ring-electric-red/20"
                       : "border-accent/40 ring-accent/20"
@@ -1277,7 +1539,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                   <img
                     src={preview}
                     alt=""
-                    className="absolute inset-0 h-full w-full object-cover"
+                    className={imagePreviewClassName}
                   />
                   {status === "uploading" && (
                     <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 bg-gradient-to-t from-black/80 to-transparent py-3 pt-8">
@@ -1345,11 +1607,22 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
 
           {(sourceUrl || referenceImages.length > 0 || variantImageCount > 0) && (
             <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-              <div>
-                <h2 className="font-semibold text-foreground">Reference Photos</h2>
-                <p className="mt-1 text-sm text-foreground/45">
-                  For admin reference only. These are not used as storefront product images.
-                </p>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="font-semibold text-foreground">Reference Photos</h2>
+                  <p className="mt-1 text-sm text-foreground/45">
+                    For admin reference only. These are not used as storefront product images.
+                  </p>
+                </div>
+                {referenceImages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setValue("referenceImages", [], { shouldDirty: true })}
+                    className="flex-shrink-0 rounded-lg border border-electric-red/30 bg-electric-red/10 px-3 py-1.5 text-xs font-medium text-electric-red hover:bg-electric-red/20 transition-colors"
+                  >
+                    Delete All
+                  </button>
+                )}
               </div>
 
               {sourceUrl ? (
@@ -1382,7 +1655,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                             className="group relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl overflow-hidden border border-surface-border bg-surface2"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                            <img src={img} alt="" className={imagePreviewClassName} />
                             <button
                               type="button"
                               onClick={() => removeReferenceImageUrl(img)}
@@ -1415,7 +1688,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                             className="group relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl overflow-hidden border border-surface-border bg-surface2"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                            <img src={img} alt="" className={imagePreviewClassName} />
                             <button
                               type="button"
                               onClick={() => removeReferenceImageUrl(img)}
@@ -1441,7 +1714,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                       className="relative aspect-[3/4] min-h-[140px] min-w-0 w-full rounded-xl overflow-hidden border border-surface-border bg-surface2 group"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                      <img src={img} alt="" className={imagePreviewClassName} />
                       <button
                         type="button"
                         onClick={() => removeReferenceImage(i)}
@@ -1596,6 +1869,13 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
         </div>
       </div>
       ) : null}
+      {cropImageIndex !== null && imageState.remotes[cropImageIndex] && (
+        <ImageObjectSelector
+          imageUrl={imageState.remotes[cropImageIndex]}
+          onConfirm={cropImageToSelection}
+          onClose={() => setCropImageIndex(null)}
+        />
+      )}
     </form>
   )
 }

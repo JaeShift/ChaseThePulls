@@ -81,9 +81,9 @@ export default async function OrdersPage() {
                 <div className="space-y-2">
                   {order.items.map((item) => (
                     <div key={item.id} className="flex items-center gap-3 text-sm">
-                      <div className="w-10 h-12 rounded-lg bg-surface2 border border-surface-border overflow-hidden flex-shrink-0">
+                      <div className="w-10 h-12 rounded-lg bg-white border border-surface-border overflow-hidden flex-shrink-0">
                         {item.product.images[0] && (
-                          <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" />
+                          <img src={item.product.images[0]} alt="" className="w-full h-full object-contain p-0.5" />
                         )}
                       </div>
                       <span className="text-foreground/70 flex-1 truncate">{item.product.name}</span>

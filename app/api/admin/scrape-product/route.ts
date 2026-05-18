@@ -9,6 +9,7 @@ import {
   scrapeAmazonGalleryWithBrowser,
   scrapeAmazonVariantsWithBrowser,
 } from "@/lib/amazon-browser-scraper"
+import { isUltraProUrl, parseImportLinkSource, type ImportLinkSource } from "@/lib/import-link-source"
 
 /** Allow Playwright enough time for multi-color Amazon pages (local + compatible hosts). */
 export const maxDuration = 180
@@ -327,6 +328,58 @@ function amazonGalleryImagesFrom($: ReturnType<typeof load>, baseUrl: string): s
   return Array.from(new Set(amazonGalleryImages)).slice(0, MAX_REFERENCE_IMAGES)
 }
 
+function genericProductReferenceImages(html: string, baseUrl: string): string[] {
+  const $ = load(html)
+  const imageCandidates: string[] = []
+  $(["main img", "article img", '[class*="product" i] img', '[id*="product" i] img', '[class*="gallery" i] img', '[class*="media" i] img', "img"].join(",")).each(
+    (_, el) => {
+      const element = $(el)
+      const width = Number(element.attr("width") ?? 0)
+      const height = Number(element.attr("height") ?? 0)
+      const tooSmall = width > 0 && height > 0 && (width < 160 || height < 160)
+      if (tooSmall) return
+
+      const url =
+        element.attr("src") ??
+        element.attr("data-src") ??
+        element.attr("data-original") ??
+        element.attr("data-image") ??
+        firstSrcsetUrl(element.attr("srcset")) ??
+        firstSrcsetUrl(element.attr("data-srcset"))
+
+      const absoluteUrl = absolutizeImageUrl(url, baseUrl)
+      if (absoluteUrl && looksLikeProductImage(absoluteUrl)) {
+        imageCandidates.push(normalizeImageUrl(absoluteUrl))
+      }
+    }
+  )
+
+  $("source[srcset], source[data-srcset]").each((_, el) => {
+    const element = $(el)
+    const absoluteUrl = absolutizeImageUrl(
+      firstSrcsetUrl(element.attr("srcset")) ?? firstSrcsetUrl(element.attr("data-srcset")),
+      baseUrl
+    )
+    if (absoluteUrl && looksLikeProductImage(absoluteUrl)) {
+      imageCandidates.push(normalizeImageUrl(absoluteUrl))
+    }
+  })
+
+  return Array.from(new Set(imageCandidates)).slice(0, MAX_REFERENCE_IMAGES)
+}
+
+function urlsMatchImporter(urls: { url: string }[], source: ImportLinkSource) {
+  for (const row of urls) {
+    try {
+      const ok = source === "amazon" ? isAmazonUrl(row.url) : isUltraProUrl(row.url)
+      if (!ok) return row.url
+    } catch {
+      return row.url
+    }
+  }
+  return null
+}
+
 function jsonLdTypeMatches(value: unknown, typeName: string): boolean {
   if (typeof value === "string") return value.toLowerCase() === typeName.toLowerCase()
   if (Array.isArray(value)) return value.some((item) => jsonLdTypeMatches(item, typeName))
@@ -434,9 +487,14 @@ function extractMetaDraft(html: string, baseUrl: string): Partial<ProductDraft> 
   }
 }
 
-function extractHtmlImageDraft(html: string, baseUrl: string): Partial<ProductDraft> {
+function extractHtmlImageDraft(html: string, baseUrl: string, opts?: { allowAmazonSelectors?: boolean }): Partial<ProductDraft> {
+  const allowAmazonSelectors = opts?.allowAmazonSelectors !== false
+
+  if (!allowAmazonSelectors) {
+    return { referenceImages: genericProductReferenceImages(html, baseUrl) }
+  }
+
   const $ = load(html)
-  const imageCandidates: string[] = []
   const amazonGalleryImages = amazonGalleryImagesFrom($, baseUrl)
   const amazonVariantImages: string[] = []
   const amazonVariantMap = new Map<string, string[]>()
@@ -527,49 +585,7 @@ function extractHtmlImageDraft(html: string, baseUrl: string): Partial<ProductDr
     }
   }
 
-  $(
-    [
-      "main img",
-      "article img",
-      '[class*="product" i] img',
-      '[id*="product" i] img',
-      '[class*="gallery" i] img',
-      '[class*="media" i] img',
-      "img",
-    ].join(",")
-  ).each((_, el) => {
-    const element = $(el)
-    const width = Number(element.attr("width") ?? 0)
-    const height = Number(element.attr("height") ?? 0)
-    const tooSmall = width > 0 && height > 0 && (width < 160 || height < 160)
-    if (tooSmall) return
-
-    const url =
-      element.attr("src") ??
-      element.attr("data-src") ??
-      element.attr("data-original") ??
-      element.attr("data-image") ??
-      firstSrcsetUrl(element.attr("srcset")) ??
-      firstSrcsetUrl(element.attr("data-srcset"))
-
-    const absoluteUrl = absolutizeImageUrl(url, baseUrl)
-    if (absoluteUrl && looksLikeProductImage(absoluteUrl)) {
-      imageCandidates.push(normalizeImageUrl(absoluteUrl))
-    }
-  })
-
-  $("source[srcset], source[data-srcset]").each((_, el) => {
-    const element = $(el)
-    const absoluteUrl = absolutizeImageUrl(
-      firstSrcsetUrl(element.attr("srcset")) ?? firstSrcsetUrl(element.attr("data-srcset")),
-      baseUrl
-    )
-    if (absoluteUrl && looksLikeProductImage(absoluteUrl)) {
-      imageCandidates.push(normalizeImageUrl(absoluteUrl))
-    }
-  })
-
-  return { referenceImages: Array.from(new Set(imageCandidates)).slice(0, MAX_REFERENCE_IMAGES) }
+  return { referenceImages: genericProductReferenceImages(html, baseUrl) }
 }
 
 function extractHtmlTextDraft(html: string): Partial<ProductDraft> {
@@ -859,7 +875,9 @@ async function enrichWithExplicitVariantUrls(
     try {
       const result = isAmazonUrl(variant.url)
         ? await scrapeAmazonGalleryWithBrowser(variant.url)
-        : { images: amazonGalleryImagesFrom(load((await fetchHtml(variant.url)).html), variant.url) }
+        : {
+            images: genericProductReferenceImages((await fetchHtml(variant.url)).html, variant.url),
+          }
 
       if ("blocked" in result && result.blocked) blockedCount += 1
 
@@ -897,7 +915,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
     }
 
-    const body = (await req.json()) as { url?: string }
+    const body = (await req.json()) as { url?: string; source?: unknown }
     if (!body.url) {
       return NextResponse.json({ error: "Product URL is required." }, { status: 400 })
     }
@@ -907,6 +925,20 @@ export async function POST(req: NextRequest) {
       parsedInput = parseImportInput(body.url)
     } catch {
       return NextResponse.json({ error: "Enter a valid product URL." }, { status: 400 })
+    }
+
+    const source = parseImportLinkSource(body.source)
+    const badUrlForImporter = urlsMatchImporter(parsedInput.variantUrls, source)
+    if (badUrlForImporter) {
+      return NextResponse.json(
+        {
+          error:
+            source === "amazon"
+              ? `Use Amazon links with the Amazon importer, or switch to Ultra PRO. Unrecognized URL: ${badUrlForImporter}`
+              : `Use Ultra PRO / Ultra Gaming (e.g. shop.ultragaming.com) links with that importer, or switch to Amazon. Unrecognized URL: ${badUrlForImporter}`,
+        },
+        { status: 400 }
+      )
     }
 
     let url: URL
@@ -921,15 +953,19 @@ export async function POST(req: NextRequest) {
       finalUrl,
       extractJsonLdDraft(html, finalUrl),
       extractMetaDraft(html, finalUrl),
-      extractHtmlImageDraft(html, finalUrl),
+      extractHtmlImageDraft(html, finalUrl, { allowAmazonSelectors: source === "amazon" }),
       extractHtmlTextDraft(html)
     )
 
-    const skipImplicitAmazonVariants = isAmazonUrl(finalUrl) && parsedInput.variantUrls.length === 1
-    const htmlEnrichedDraft = skipImplicitAmazonVariants
-      ? draft
-      : await enrichAmazonVariantImages(finalUrl, draft)
-    const browserEnrichedDraft = await enrichWithBrowserVariants(finalUrl, htmlEnrichedDraft)
+    let htmlEnrichedDraft: ProductDraft = draft
+    let browserEnrichedDraft: ProductDraft = draft
+
+    if (source === "amazon") {
+      const skipImplicitAmazonVariants = isAmazonUrl(finalUrl) && parsedInput.variantUrls.length === 1
+      htmlEnrichedDraft = skipImplicitAmazonVariants ? draft : await enrichAmazonVariantImages(finalUrl, draft)
+      browserEnrichedDraft = await enrichWithBrowserVariants(finalUrl, htmlEnrichedDraft)
+    }
+
     return NextResponse.json({
       draft: await enrichWithExplicitVariantUrls(browserEnrichedDraft, parsedInput.variantUrls),
     })

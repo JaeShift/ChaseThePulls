@@ -98,9 +98,9 @@ export default function CartPage() {
                     className="flex gap-4 p-4 rounded-2xl border border-surface-border bg-surface"
                   >
                     {/* Image */}
-                    <div className="relative w-24 h-28 rounded-xl overflow-hidden bg-surface2 flex-shrink-0 border border-surface-border">
+                    <div className="relative w-24 h-28 rounded-xl overflow-hidden bg-white flex-shrink-0 border border-surface-border">
                       {item.product.images[0] ? (
-                        <Image src={item.product.images[0]} alt={item.product.name} fill className="object-cover" sizes="96px" />
+                        <Image src={item.product.images[0]} alt={item.product.name} fill className="object-contain p-1" sizes="96px" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-foreground/20 text-xs text-center">No Image</div>
                       )}

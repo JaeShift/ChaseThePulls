@@ -58,13 +58,13 @@ export function CartDrawer() {
                     className="flex gap-4 p-3 rounded-xl border border-surface-border bg-surface2/50 group"
                   >
                     {/* Product image */}
-                    <div className="relative w-20 h-24 rounded-lg overflow-hidden bg-surface flex-shrink-0">
+                    <div className="relative w-20 h-24 rounded-lg overflow-hidden bg-white flex-shrink-0">
                       {item.product.images[0] ? (
                         <Image
                           src={item.product.images[0]}
                           alt={item.product.name}
                           fill
-                          className="object-cover"
+                          className="object-contain p-1"
                           sizes="80px"
                         />
                       ) : (

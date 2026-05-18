@@ -13,8 +13,15 @@ import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/CartContext"
 import { toast } from "@/components/ui/use-toast"
 import { formatPrice, getDiscountPercent } from "@/lib/utils"
+import { getProductImageZoom } from "@/lib/product-image-adjustments"
 import { subtabLabel } from "@/lib/game-subtabs"
-import { CATEGORY_LABELS, GAME_LABELS, GAME_COLORS, GAME_LOGO_BALANCE, type Product } from "@/types"
+import {
+  CATEGORY_LABELS,
+  GAME_LABELS,
+  GAME_COLORS,
+  GAME_LOGO_BALANCE,
+  type Product,
+} from "@/types"
 
 interface ProductCardProps {
   product: Product
@@ -55,6 +62,8 @@ export function ProductCard({ product }: ProductCardProps) {
     : null
 
   const gameColor = GAME_COLORS[product.game]
+  const imageClassName = "object-contain [object-position:center_60%] transition-transform duration-500 group-hover:scale-105"
+  const imageZoom = product.images[0] ? getProductImageZoom(product.images[0]) : 1
 
   return (
     <HolographicCard className="rounded-2xl group">
@@ -65,14 +74,15 @@ export function ProductCard({ product }: ProductCardProps) {
             borderColor: `${gameColor}35`,
           }}
         >
-          {/* Image container */}
-          <div className="relative aspect-[3/4] overflow-hidden bg-surface2">
+          {/* Image container — z-[15] keeps it above HolographicCard's overlay layers (z-9/10/11) */}
+          <div className="relative z-[15] aspect-[3/4] bg-white">
             {product.images[0] ? (
               <Image
                 src={product.images[0]}
                 alt={product.name}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className={imageClassName}
+                style={{ transform: `scale(${imageZoom})` }}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             ) : (
@@ -86,9 +96,6 @@ export function ProductCard({ product }: ProductCardProps) {
                 </div>
               </div>
             )}
-
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
             {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-1.5">
@@ -105,7 +112,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
 
             {/* Game franchise mark — logo only, no background container */}
-            <div className="absolute top-2.5 right-2.5 z-[1] h-3.5 w-14 sm:w-[4.5rem] pointer-events-none" title={GAME_LABELS[product.game]}>
+            <div className="absolute top-3 right-3 z-[1] h-9 w-28 sm:w-32 pointer-events-none" title={GAME_LABELS[product.game]}>
               <GameLogo
                 game={product.game}
                 balance={
@@ -113,10 +120,10 @@ export function ProductCard({ product }: ProductCardProps) {
                     ? GAME_LOGO_BALANCE[product.game]
                     : 1
                 }
-                heightClassName="h-3.5"
-                widthClassName="w-14 sm:w-[4.5rem]"
-                className="[filter:drop-shadow(0_1px_4px_rgba(0,0,0,0.7))]"
-                sizes="64px"
+                heightClassName="h-9"
+                widthClassName="w-28 sm:w-32"
+                className="[filter:drop-shadow(0_1px_6px_rgba(0,0,0,0.8))]"
+                sizes="128px"
               />
             </div>
 
@@ -160,7 +167,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </h3>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold" style={{ color: gameColor }}>
+                <span className="text-lg font-bold text-accent">
                   {formatPrice(product.price)}
                 </span>
                 {product.comparePrice && (

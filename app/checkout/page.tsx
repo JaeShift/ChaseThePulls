@@ -86,7 +86,7 @@ export default function CheckoutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex gap-4 p-4 rounded-2xl border border-surface-border bg-surface"
               >
-                <div className="relative w-16 h-20 rounded-xl overflow-hidden bg-surface2 flex-shrink-0 border border-surface-border">
+                <div className="relative w-16 h-20 rounded-xl overflow-hidden bg-white flex-shrink-0 border border-surface-border">
                   {item.product.images[0] ? (
                     <Image
                       src={item.product.images[0]}

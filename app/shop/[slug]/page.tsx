@@ -10,23 +10,21 @@ import { subtabLabel } from "@/lib/game-subtabs"
 import {
   CATEGORY_LABELS,
   CATEGORY_COLORS,
-  CATEGORY_BG,
   GAME_LABELS,
   GAME_COLORS,
-  GAME_BG,
 } from "@/types"
 import { AddToCartButton } from "@/components/shop/AddToCartButton"
-import { HolographicCard } from "@/components/animations/HolographicCard"
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal"
 import { ProductCard } from "@/components/shop/ProductCard"
+import { ProductImageGallery } from "@/components/shop/ProductImageGallery"
 import { Badge } from "@/components/ui/badge"
 import {
   ChevronRight,
-  Package,
   Shield,
   Truck,
   RotateCcw,
   Star,
+  Package,
 } from "lucide-react"
 import type { Metadata } from "next"
 
@@ -79,10 +77,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     GAME_COLORS[product.game as keyof typeof GAME_COLORS] ??
     CATEGORY_COLORS[product.category as keyof typeof CATEGORY_COLORS] ??
     "#6366F1"
-  const bg =
-    GAME_BG[product.game as keyof typeof GAME_BG] ??
-    CATEGORY_BG[product.category as keyof typeof CATEGORY_BG] ??
-    "rgba(99,102,241,0.06)"
   const discount = product.comparePrice
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
     : null
@@ -109,65 +103,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           {/* Image Gallery */}
-          <div className="space-y-4">
-            <HolographicCard className="rounded-2xl" intensity={1.5}>
-              <div
-                className="relative aspect-[3/4] rounded-2xl overflow-hidden border"
-                style={{ borderColor: `${color}25`, background: bg }}
-              >
-                {/* Badges */}
-                <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-                  {product.stock === 0 && (
-                    <Badge variant="secondary" className="bg-white/10 text-foreground/60 border-white/10">
-                      Sold Out
-                    </Badge>
-                  )}
-                  {product.featured && (
-                    <Badge className="bg-accent/20 text-accent border-accent/30">
-                      <Star className="w-3 h-3 mr-1 fill-accent" /> Featured
-                    </Badge>
-                  )}
-                </div>
-                {discount && (
-                  <div className="absolute top-4 right-4 z-10">
-                    <Badge className="bg-electric-red/20 text-electric-red border-electric-red/30">
-                      -{discount}% OFF
-                    </Badge>
-                  </div>
-                )}
-
-                {product.images[0] ? (
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    fill
-                    className="object-contain p-6"
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Package className="w-24 h-24 text-foreground/10" />
-                  </div>
-                )}
-              </div>
-            </HolographicCard>
-
-            {/* Thumbnail strip */}
-            {product.images.length > 1 && (
-              <div className="flex gap-2">
-                {product.images.slice(0, 5).map((img, i) => (
-                  <div
-                    key={i}
-                    className="relative w-16 h-20 rounded-lg overflow-hidden border-2 border-accent/30 hover:border-accent transition-colors cursor-pointer"
-                    style={{ background: bg }}
-                  >
-                    <Image src={img} alt={`View ${i + 1}`} fill className="object-contain p-1" sizes="64px" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductImageGallery
+            productId={product.id}
+            initialImages={product.images}
+            color={color}
+            stock={product.stock}
+            featured={product.featured}
+            discount={discount}
+          />
 
           {/* Product Info */}
           <div className="flex flex-col gap-6">
@@ -204,7 +147,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             {/* Price */}
             <div className="flex items-center gap-4">
-              <span className="text-4xl font-bold" style={{ color }}>
+              <span className="text-4xl font-bold text-accent">
                 {formatPrice(product.price)}
               </span>
               {product.comparePrice && product.comparePrice > product.price && (

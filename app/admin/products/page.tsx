@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CATEGORY_LABELS, CATEGORY_COLORS, GAME_LABELS, GAME_COLORS } from "@/types"
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton"
+import { DuplicateProductButton } from "@/components/admin/DuplicateProductButton"
 
 export default async function AdminProductsPage() {
   let products: Awaited<ReturnType<typeof prisma.product.findMany>> = []
@@ -65,9 +66,9 @@ export default async function AdminProductsPage() {
                     <tr key={product.id} className="border-b border-surface-border hover:bg-surface2/50 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-12 rounded-lg bg-surface2 border border-surface-border overflow-hidden flex-shrink-0">
+                          <div className="w-10 h-12 rounded-lg bg-white border border-surface-border overflow-hidden flex-shrink-0">
                             {product.images[0] ? (
-                              <Image src={product.images[0]} alt="" width={40} height={48} className="object-cover w-full h-full" />
+                              <Image src={product.images[0]} alt="" width={40} height={48} className="h-full w-full object-contain p-0.5" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
                                 <Package className="w-4 h-4 text-foreground/20" />
@@ -122,6 +123,7 @@ export default async function AdminProductsPage() {
                               <Pencil className="w-4 h-4" />
                             </Link>
                           </Button>
+                          <DuplicateProductButton productId={product.id} productName={product.name} />
                           <DeleteProductButton productId={product.id} productName={product.name} />
                         </div>
                       </td>

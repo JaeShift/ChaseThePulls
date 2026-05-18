@@ -19,7 +19,7 @@ export function ShopFilters() {
       className={cn(
         "mb-8 flex w-full flex-col items-center gap-0",
         hasGameTabs &&
-          "sticky top-[5.75rem] z-30 bg-background/95 py-1 backdrop-blur-sm supports-[backdrop-filter]:bg-background/85",
+          "sticky top-[5.75rem] z-50 bg-background/95 py-1 backdrop-blur-sm supports-[backdrop-filter]:bg-background/85",
       )}
     >
       <ShopSubcategoryTabs />
