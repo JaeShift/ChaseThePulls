@@ -1,6 +1,6 @@
 "use client"
 
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -16,8 +16,13 @@ import {
   ZoomIn,
   ZoomOut,
   Scissors,
+  Eraser,
+  ChevronDown,
+  Check,
+  Link2,
 } from "lucide-react"
 import { ImageObjectSelector } from "@/components/admin/ImageObjectSelector"
+import { ImageShadowEraser } from "@/components/admin/ImageShadowEraser"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -240,11 +245,23 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
   const [importError, setImportError] = useState<string | null>(null)
   const [categoryManuallyChanged, setCategoryManuallyChanged] = useState(false)
   const [shadowingImageIndex, setShadowingImageIndex] = useState<number | null>(null)
+  const [eraserImageIndex, setEraserImageIndex] = useState<number | null>(null)
   const [cropImageIndex, setCropImageIndex] = useState<number | null>(null)
   const [referenceImageVariants, setReferenceImageVariants] = useState<ReferenceImageVariant[]>(
     () => (Array.isArray(draft?.referenceImageVariants) ? draft.referenceImageVariants : [])
   )
   const [draggingImages, setDraggingImages] = useState(false)
+  const [importOpen, setImportOpen] = useState(true)
+  const [infoOpen, setInfoOpen] = useState(true)
+  const [imagesOpen, setImagesOpen] = useState(true)
+  const [refPhotosOpen, setRefPhotosOpen] = useState(true)
+  const [importSummary, setImportSummary] = useState<{
+    name: string
+    hasPrice: boolean
+    refPhotos: number
+  } | null>(null)
+  const [autoDetectedSource, setAutoDetectedSource] = useState(false)
+  const importUrlRef = useRef<HTMLTextAreaElement | null>(null)
 
   const { register, handleSubmit, getValues, setValue, watch, formState: { errors } } = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
@@ -628,6 +645,21 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
     setCropImageIndex(null)
   }
 
+  const applyErasedImage = async (editedImageUrl: string) => {
+    if (eraserImageIndex === null) return
+
+    setImageState((prev) => ({
+      ...prev,
+      remotes: prev.remotes.map((img, i) => (i === eraserImageIndex ? editedImageUrl : img)),
+    }))
+    toast({
+      title: "Shadow erased",
+      description: "The edited product image was saved.",
+      variant: "success",
+    })
+    setEraserImageIndex(null)
+  }
+
   const dismissPending = (pendingId: string) => {
     setImageState((prev) => ({
       ...prev,
@@ -805,15 +837,23 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
       })
       setReferenceImageVariants(draft.referenceImageVariants ?? [])
 
-      toast({
-        title: "Product details imported",
-        description: draft.browserScrapeWarning
-          ? draft.browserScrapeWarning
-          : draft.referenceImages?.length
-          ? "Review the draft fields and upload your own storefront photos before saving."
-          : "No reference photos were found on that page. Text fields may still import.",
-        variant: "success",
+      const refPhotoCount = (draft.referenceImages?.length ?? 0) +
+        (draft.referenceImageVariants?.reduce((n, v) => n + v.images.length, 0) ?? 0)
+      setImportSummary({
+        name: draft.name?.trim() || "",
+        hasPrice: typeof draft.price === "number" && draft.price > 0,
+        refPhotos: refPhotoCount,
       })
+
+      // Collapse import, expand images; keep info open
+      setImportOpen(false)
+      setImagesOpen(true)
+      setInfoOpen(true)
+      if (refPhotoCount > 0) setRefPhotosOpen(true)
+
+      if (draft.browserScrapeWarning) {
+        toast({ title: "Import warning", description: draft.browserScrapeWarning, variant: "destructive" })
+      }
     } catch {
       const message = "Network error while importing product details."
       setImportError(message)
@@ -1094,22 +1134,51 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <input type="hidden" {...register("sourceUrl")} />
 
-      <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-        <div>
-          <h2 className="font-semibold text-foreground">Import Product Details</h2>
-          <p className="mt-1 text-sm text-foreground/45">
+      <div className="rounded-2xl border border-surface-border bg-surface overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setImportOpen((o) => !o)}
+          data-section-toggle="import"
+          className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left hover:bg-surface2/50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Link2 className="h-4 w-4 text-accent flex-shrink-0" />
+            <span className="font-semibold text-foreground">Import Product Details</span>
+            {importSummary && !importOpen && (
+              <span className="ml-1 flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                <Check className="h-2.5 w-2.5" />
+                imported
+              </span>
+            )}
+          </div>
+          <ChevronDown
+            className={`h-4 w-4 text-foreground/40 flex-shrink-0 transition-transform duration-200 ${importOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+        <div className={`${importOpen ? "block" : "hidden"} px-6 pb-6 space-y-4`}>
+          <p className="text-sm text-foreground/45">
             Choose <strong className="text-foreground/60">Amazon</strong> or{" "}
             <strong className="text-foreground/60">Ultra PRO / Ultra Gaming</strong>, then paste product URLs
             from that site only. Imported text and reference photos are drafts only.
           </p>
-        </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <div className="space-y-1.5 w-full shrink-0 sm:w-56">
-            <Label htmlFor="import-link-source">Import from site</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="import-link-source">Import from site</Label>
+              {autoDetectedSource && (
+                <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <Check className="h-2.5 w-2.5" />
+                  auto
+                </span>
+              )}
+            </div>
             <Select
               value={importLinkSource}
-              onValueChange={(v) => setImportLinkSource(v as ImportLinkSource)}
+              onValueChange={(v) => {
+                setImportLinkSource(v as ImportLinkSource)
+                setAutoDetectedSource(false)
+              }}
               disabled={importing || batchDrafting}
             >
               <SelectTrigger id="import-link-source">
@@ -1125,8 +1194,26 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
             </Select>
           </div>
           <Textarea
+            ref={importUrlRef}
+            id="import-url-textarea"
             value={importUrl}
-            onChange={(e) => setImportUrl(e.target.value)}
+            onChange={(e) => {
+              setImportUrl(e.target.value)
+              const urls = productUrlsFromText(e.target.value)
+              if (urls.length > 0) {
+                if (isUltraProUrl(urls[0])) {
+                  setImportLinkSource("ultrapro")
+                  setAutoDetectedSource(true)
+                } else if (isAmazonProductUrl(urls[0])) {
+                  setImportLinkSource("amazon")
+                  setAutoDetectedSource(true)
+                } else {
+                  setAutoDetectedSource(false)
+                }
+              } else {
+                setAutoDetectedSource(false)
+              }
+            }}
             placeholder="https://example.com/products/product-name"
             rows={2}
             className="min-w-0 flex-1"
@@ -1240,12 +1327,12 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                                 >
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
                                   <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                                  <button
-                                    type="button"
-                                    onClick={() => removeBatchDraftImage(item.id, img)}
-                                    className="absolute right-1.5 top-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-background/90 text-foreground/80 opacity-0 transition-opacity hover:text-electric-red group-hover:opacity-100"
-                                    aria-label="Remove reference image"
-                                  >
+                        <button
+                          type="button"
+                          onClick={() => removeBatchDraftImage(item.id, img)}
+                          className="absolute right-1.5 top-1.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 opacity-100 lg:opacity-0 lg:transition-opacity hover:text-electric-red lg:group-hover:opacity-100"
+                          aria-label="Remove reference image"
+                        >
                                     <X className="h-3.5 w-3.5" />
                                   </button>
                                 </div>
@@ -1347,15 +1434,70 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
             </div>
           </div>
         ) : null}
+        </div>{/* end collapsible import content */}
       </div>
+
+      {/* Post-import summary banner */}
+      {importSummary && (
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/8 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex-1 space-y-1">
+            <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Check className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+              Import complete
+            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-foreground/60">
+              {importSummary.name && (
+                <span>
+                  <span className="font-medium text-foreground/80">{importSummary.name}</span>
+                </span>
+              )}
+              <span>{importSummary.hasPrice ? "✓ Price found" : "⚠ No price — enter manually"}</span>
+              <span>
+                {importSummary.refPhotos > 0
+                  ? `✓ ${importSummary.refPhotos} reference photo${importSummary.refPhotos === 1 ? "" : "s"}`
+                  : "⚠ No reference photos found"}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.querySelector("[data-section='actions']")
+                el?.scrollIntoView({ behavior: "smooth", block: "center" })
+              }}
+              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500 transition-colors"
+            >
+              Jump to Save
+            </button>
+            <button
+              type="button"
+              onClick={() => setImportSummary(null)}
+              className="rounded-full p-1 text-foreground/40 hover:text-foreground transition-colors"
+              aria-label="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {batchDraftItems.length === 0 ? (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Info */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-            <h2 className="font-semibold text-foreground">Product Information</h2>
-
+          <div className="rounded-2xl border border-surface-border bg-surface overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setInfoOpen((o) => !o)}
+              className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left hover:bg-surface2/50 transition-colors"
+            >
+              <span className="font-semibold text-foreground">Product Information</span>
+              <ChevronDown
+                className={`h-4 w-4 text-foreground/40 flex-shrink-0 transition-transform duration-200 ${infoOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            <div className={`${infoOpen ? "block" : "hidden"} px-6 pb-6 space-y-4`}>
             <div className="space-y-1.5">
               <Label>Product Name</Label>
               <Input
@@ -1436,11 +1578,22 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
               </Select>
               {errors.category && <p className="text-xs text-electric-red">{errors.category.message}</p>}
             </div>
+            </div>{/* end collapsible info content */}
           </div>
 
           {/* Images */}
-          <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-            <h2 className="font-semibold text-foreground">Product Images</h2>
+          <div className="rounded-2xl border border-surface-border bg-surface overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setImagesOpen((o) => !o)}
+              className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left hover:bg-surface2/50 transition-colors"
+            >
+              <span className="font-semibold text-foreground">Product Images</span>
+              <ChevronDown
+                className={`h-4 w-4 text-foreground/40 flex-shrink-0 transition-transform duration-200 ${imagesOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            <div className={`${imagesOpen ? "block" : "hidden"} px-6 pb-6 space-y-4`}>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 min-w-0">
               {images.map((img, i) => (
@@ -1455,11 +1608,11 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                     className={`${imagePreviewClassName} z-[1]`}
                     style={{ transform: `scale(${(getProductImageZoom(img) * 1.3).toFixed(3)})` }}
                   />
-                  <div className="absolute top-2 left-2 z-10 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="absolute top-2 left-2 z-10 flex gap-1 opacity-100 lg:opacity-0 lg:transition-opacity lg:group-hover:opacity-100">
                     <button
                       type="button"
                       onClick={() => flipImageHorizontally(i)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
+                      className="flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
                       aria-label="Flip image horizontally"
                       title="Flip horizontally"
                     >
@@ -1468,7 +1621,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                     <button
                       type="button"
                       onClick={() => zoomImage(i, 1)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
+                      className="flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
                       aria-label="Zoom image in"
                       title="Zoom in"
                     >
@@ -1477,7 +1630,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                     <button
                       type="button"
                       onClick={() => zoomImage(i, -1)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
+                      className="flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent"
                       aria-label="Zoom image out"
                       title="Zoom out"
                     >
@@ -1487,7 +1640,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                       type="button"
                       onClick={() => addObjectShadow(i)}
                       disabled={shadowingImageIndex !== null}
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
                       aria-label="Add shadow to object"
                       title="Add object shadow"
                     >
@@ -1499,9 +1652,19 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                     </button>
                     <button
                       type="button"
+                      onClick={() => setEraserImageIndex(i)}
+                      disabled={shadowingImageIndex !== null}
+                      className="flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+                      aria-label="Erase shadow only"
+                      title="Erase gray shadow only (product protected)"
+                    >
+                      <Eraser className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => setCropImageIndex(i)}
                       disabled={shadowingImageIndex !== null}
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
                       aria-label="Select object to keep"
                       title="Select object (white out rest)"
                     >
@@ -1511,7 +1674,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                   <button
                     type="button"
                     onClick={() => removeImage(i)}
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 flex items-center justify-center text-foreground/80 hover:text-electric-red opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    className="absolute top-2 right-2 w-9 h-9 lg:w-7 lg:h-7 rounded-full bg-background/90 flex items-center justify-center text-foreground/80 hover:text-electric-red opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity z-10"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1603,27 +1766,46 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
               </label>
             </div>
             {errors.images && <p className="text-xs text-electric-red">{errors.images.message as string}</p>}
+            </div>{/* end collapsible images content */}
           </div>
 
           {(sourceUrl || referenceImages.length > 0 || variantImageCount > 0) && (
-            <div className="rounded-2xl border border-surface-border bg-surface p-6 space-y-4">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="font-semibold text-foreground">Reference Photos</h2>
-                  <p className="mt-1 text-sm text-foreground/45">
-                    For admin reference only. These are not used as storefront product images.
-                  </p>
+            <div className="rounded-2xl border border-surface-border bg-surface overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setRefPhotosOpen((o) => !o)}
+                className="w-full flex items-center justify-between gap-3 px-6 py-4 text-left hover:bg-surface2/50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold text-foreground">Reference Photos</span>
+                  {(referenceImages.length > 0 || variantImageCount > 0) && (
+                    <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs font-medium text-accent">
+                      {referenceImages.length + variantImageCount}
+                    </span>
+                  )}
                 </div>
-                {referenceImages.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setValue("referenceImages", [], { shouldDirty: true })}
-                    className="flex-shrink-0 rounded-lg border border-electric-red/30 bg-electric-red/10 px-3 py-1.5 text-xs font-medium text-electric-red hover:bg-electric-red/20 transition-colors"
-                  >
-                    Delete All
-                  </button>
-                )}
-              </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {referenceImages.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setValue("referenceImages", [], { shouldDirty: true })
+                      }}
+                      className="rounded-lg border border-electric-red/30 bg-electric-red/10 px-2 py-1 text-xs font-medium text-electric-red hover:bg-electric-red/20 transition-colors"
+                    >
+                      Delete All
+                    </button>
+                  )}
+                  <ChevronDown
+                    className={`h-4 w-4 text-foreground/40 transition-transform duration-200 ${refPhotosOpen ? "rotate-180" : ""}`}
+                  />
+                </div>
+              </button>
+              <div className={`${refPhotosOpen ? "block" : "hidden"} px-6 pb-6 space-y-4`}>
+              <p className="text-sm text-foreground/45">
+                For admin reference only. These are not used as storefront product images.
+              </p>
 
               {sourceUrl ? (
                 <a
@@ -1659,14 +1841,14 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                             <button
                               type="button"
                               onClick={() => removeReferenceImageUrl(img)}
-                              className="absolute top-2 right-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 opacity-0 transition-opacity hover:text-electric-red group-hover:opacity-100"
-                              aria-label="Remove reference image"
-                            >
-                              <X className="h-4 w-4" />
-                            </button>
-                            <span className="absolute bottom-2 left-2 rounded bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground/70">
-                              Main Gallery
-                            </span>
+                              className="absolute top-2 right-2 z-10 flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 opacity-100 lg:opacity-0 lg:transition-opacity hover:text-electric-red lg:group-hover:opacity-100"
+                          aria-label="Remove reference image"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                        <span className="absolute bottom-2 left-2 rounded bg-background/90 px-2 py-0.5 text-xs font-medium text-foreground/70">
+                          Main Gallery
+                        </span>
                           </div>
                         ))}
                       </div>
@@ -1692,7 +1874,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                             <button
                               type="button"
                               onClick={() => removeReferenceImageUrl(img)}
-                              className="absolute top-2 right-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 opacity-0 transition-opacity hover:text-electric-red group-hover:opacity-100"
+                              className="absolute top-2 right-2 z-10 flex h-9 w-9 lg:h-7 lg:w-7 items-center justify-center rounded-full bg-background/90 text-foreground/80 opacity-100 lg:opacity-0 lg:transition-opacity hover:text-electric-red lg:group-hover:opacity-100"
                               aria-label="Remove reference image"
                             >
                               <X className="h-4 w-4" />
@@ -1718,7 +1900,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                       <button
                         type="button"
                         onClick={() => removeReferenceImage(i)}
-                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 flex items-center justify-center text-foreground/80 hover:text-electric-red opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                        className="absolute top-2 right-2 w-9 h-9 lg:w-7 lg:h-7 rounded-full bg-background/90 flex items-center justify-center text-foreground/80 hover:text-electric-red opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity z-10"
                         aria-label="Remove reference image"
                       >
                         <X className="w-4 h-4" />
@@ -1735,6 +1917,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
                   behind scripts that cannot be read from the page HTML.
                 </p>
               )}
+              </div>{/* end collapsible ref photos content */}
             </div>
           )}
         </div>
@@ -1821,7 +2004,7 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
           </div>
 
           {/* Actions */}
-          <div className="space-y-2">
+          <div className="space-y-2" data-section="actions">
             {(mode === "create" || draftId) && (
               <Button
                 type="button"
@@ -1876,6 +2059,56 @@ export function ProductForm({ product, draft, draftId, mode }: ProductFormProps)
           onClose={() => setCropImageIndex(null)}
         />
       )}
+      {eraserImageIndex !== null && imageState.remotes[eraserImageIndex] && (
+        <ImageShadowEraser
+          imageUrl={imageState.remotes[eraserImageIndex]}
+          onConfirm={applyErasedImage}
+          onClose={() => setEraserImageIndex(null)}
+        />
+      )}
+
+      {/* Floating mobile bottom action bar */}
+      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden border-t border-surface-border bg-background/95 backdrop-blur-sm safe-area-bottom">
+        <div className="flex gap-2 px-4 py-3">
+          {(mode === "create" || draftId) && (
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              className="flex-1 bg-blue-600 text-white hover:bg-blue-500"
+              disabled={draftSaving || saving}
+              onClick={saveDraft}
+            >
+              {draftSaving ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving...
+                </span>
+              ) : (
+                "Draft"
+              )}
+            </Button>
+          )}
+          <Button
+            type="submit"
+            variant="default"
+            size="lg"
+            className={`bg-emerald-600 text-white hover:bg-emerald-500 ${(mode === "create" || draftId) ? "flex-1" : "w-full"}`}
+            disabled={saving}
+          >
+            {saving ? (
+              <span className="flex items-center gap-2 justify-center">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {mode === "edit" ? "Saving..." : "Publishing..."}
+              </span>
+            ) : (
+              mode === "edit" ? "Save Changes" : "Publish"
+            )}
+          </Button>
+        </div>
+      </div>
+      {/* Spacer so the floating bar doesn't cover form content on mobile */}
+      <div className="h-20 lg:hidden" aria-hidden="true" />
     </form>
   )
 }

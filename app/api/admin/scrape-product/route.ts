@@ -207,6 +207,98 @@ function firstSrcsetUrl(value: unknown): string | undefined {
     .find(Boolean)
 }
 
+function largestSrcsetUrl(value: unknown): string | undefined {
+  const srcset = textFrom(value)
+  if (!srcset) return undefined
+
+  let bestUrl: string | undefined
+  let bestWidth = -1
+
+  for (const entry of srcset.split(",")) {
+    const parts = entry.trim().split(/\s+/)
+    const url = parts[0]
+    if (!url) continue
+
+    const widthMatch = parts[1]?.match(/^(\d+(?:\.\d+)?)(w|x)?$/i)
+    const width = widthMatch ? Number(widthMatch[1]) : 0
+    if (width >= bestWidth) {
+      bestWidth = width
+      bestUrl = url
+    }
+  }
+
+  return bestUrl ?? firstSrcsetUrl(srcset)
+}
+
+function ultraProFullSizeImageUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+    if (!parsed.pathname.includes("/cdn/shop/files/")) return url
+
+    parsed.searchParams.set("width", "1500")
+    parsed.searchParams.delete("height")
+    parsed.searchParams.delete("crop")
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
+function ultraProGalleryReferenceImages(html: string, baseUrl: string): string[] {
+  const $ = load(html)
+  const galleryRoot = $("#product-media .media-gallery, #product-media media-gallery")
+  if (!galleryRoot.length) return []
+
+  const imageCandidates: string[] = []
+  const pushUrl = (value: unknown) => {
+    const absoluteUrl = normalizedImageCandidate(value, baseUrl)
+    if (!absoluteUrl || !looksLikeProductImage(absoluteUrl)) return
+    imageCandidates.push(ultraProFullSizeImageUrl(absoluteUrl))
+  }
+
+  galleryRoot.find("#gallery-viewer .js-zoom-link").each((_, el) => {
+    pushUrl($(el).attr("href"))
+  })
+
+  galleryRoot.find("#gallery-viewer img.product-image, #gallery-viewer .zoom-image[data-src]").each(
+    (_, el) => {
+      const element = $(el)
+      pushUrl(element.attr("data-src"))
+      pushUrl(element.attr("src"))
+      pushUrl(largestSrcsetUrl(element.attr("srcset")))
+      pushUrl(largestSrcsetUrl(element.attr("data-srcset")))
+    }
+  )
+
+  galleryRoot.find("#gallery-viewer picture source[srcset], #gallery-viewer picture source[data-srcset]").each(
+    (_, el) => {
+      const element = $(el)
+      pushUrl(largestSrcsetUrl(element.attr("srcset")))
+      pushUrl(largestSrcsetUrl(element.attr("data-srcset")))
+    }
+  )
+
+  galleryRoot.find(".media-gallery__thumbs img").each((_, el) => {
+    const element = $(el)
+    pushUrl(element.attr("src"))
+    pushUrl(largestSrcsetUrl(element.attr("srcset")))
+  })
+
+  const deduped = Array.from(
+    new Map(
+      imageCandidates.map((url) => {
+        try {
+          return [new URL(url).pathname, url] as const
+        } catch {
+          return [url, url] as const
+        }
+      })
+    ).values()
+  )
+
+  return deduped.slice(0, MAX_REFERENCE_IMAGES)
+}
+
 function normalizeAmazonImageUrl(url: string): string {
   return url.replace(/\._[^/.]+_\.(jpe?g|png|webp)(\?.*)?$/i, ".$1$2")
 }
@@ -487,7 +579,18 @@ function extractMetaDraft(html: string, baseUrl: string): Partial<ProductDraft> 
   }
 }
 
-function extractHtmlImageDraft(html: string, baseUrl: string, opts?: { allowAmazonSelectors?: boolean }): Partial<ProductDraft> {
+function extractHtmlImageDraft(
+  html: string,
+  baseUrl: string,
+  opts?: { allowAmazonSelectors?: boolean; useUltraProGallery?: boolean }
+): Partial<ProductDraft> {
+  if (opts?.useUltraProGallery) {
+    const referenceImages = ultraProGalleryReferenceImages(html, baseUrl)
+    if (referenceImages.length > 0) {
+      return { referenceImages }
+    }
+  }
+
   const allowAmazonSelectors = opts?.allowAmazonSelectors !== false
 
   if (!allowAmazonSelectors) {
@@ -616,15 +719,19 @@ function mergeDrafts(
   jsonLd: Partial<ProductDraft>,
   meta: Partial<ProductDraft>,
   htmlImages: Partial<ProductDraft>,
-  htmlText: Partial<ProductDraft>
+  htmlText: Partial<ProductDraft>,
+  opts?: { galleryReferenceImagesOnly?: boolean }
 ) {
-  const referenceImages = Array.from(
-    new Set([
-      ...(jsonLd.referenceImages ?? []),
-      ...(meta.referenceImages ?? []),
-      ...(htmlImages.referenceImages ?? []),
-    ])
-  ).slice(0, MAX_REFERENCE_IMAGES)
+  const referenceImages =
+    opts?.galleryReferenceImagesOnly && htmlImages.referenceImages?.length
+      ? htmlImages.referenceImages
+      : Array.from(
+          new Set([
+            ...(jsonLd.referenceImages ?? []),
+            ...(meta.referenceImages ?? []),
+            ...(htmlImages.referenceImages ?? []),
+          ])
+        ).slice(0, MAX_REFERENCE_IMAGES)
   const referenceImageVariants = htmlImages.referenceImageVariants ?? []
 
   const description = jsonLd.description ?? meta.description
@@ -935,7 +1042,7 @@ export async function POST(req: NextRequest) {
           error:
             source === "amazon"
               ? `Use Amazon links with the Amazon importer, or switch to Ultra PRO. Unrecognized URL: ${badUrlForImporter}`
-              : `Use Ultra PRO / Ultra Gaming (e.g. shop.ultragaming.com) links with that importer, or switch to Amazon. Unrecognized URL: ${badUrlForImporter}`,
+              : `Use Ultra PRO / Ultra Gaming (e.g. ultrapro.com or shop.ultragaming.com) links with that importer, or switch to Amazon. Unrecognized URL: ${badUrlForImporter}`,
         },
         { status: 400 }
       )
@@ -949,12 +1056,21 @@ export async function POST(req: NextRequest) {
     }
 
     const { html, finalUrl } = await fetchHtml(url.toString())
+    const useUltraProGallery = source === "ultrapro" && isUltraProUrl(finalUrl)
+    const htmlImages = extractHtmlImageDraft(html, finalUrl, {
+      allowAmazonSelectors: source === "amazon",
+      useUltraProGallery,
+    })
     const draft = mergeDrafts(
       finalUrl,
       extractJsonLdDraft(html, finalUrl),
       extractMetaDraft(html, finalUrl),
-      extractHtmlImageDraft(html, finalUrl, { allowAmazonSelectors: source === "amazon" }),
-      extractHtmlTextDraft(html)
+      htmlImages,
+      extractHtmlTextDraft(html),
+      {
+        galleryReferenceImagesOnly:
+          useUltraProGallery && (htmlImages.referenceImages?.length ?? 0) > 0,
+      }
     )
 
     let htmlEnrichedDraft: ProductDraft = draft
