@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { Suspense, useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
@@ -127,7 +127,9 @@ export function Navbar() {
             </Link>
 
             <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
-              <NavbarCategoryQuicklinks />
+              <Suspense fallback={null}>
+                <NavbarCategoryQuicklinks />
+              </Suspense>
             </div>
 
             <div className="flex items-center gap-1.5 sm:gap-2">
@@ -249,7 +251,9 @@ export function Navbar() {
               className="border-t border-surface-border bg-background/95 shadow-2xl shadow-black/50 backdrop-blur-xl lg:hidden"
             >
               <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4">
-                <NavbarCategoryQuicklinks compact />
+                <Suspense fallback={null}>
+                  <NavbarCategoryQuicklinks compact />
+                </Suspense>
                 <div className="grid grid-cols-2 gap-2 border-t border-surface-border pt-4">
                   <Button variant="outline" size="default" className="justify-center" asChild>
                     <Link href="/shop" onClick={() => setMobileOpen(false)}>Search shop</Link>
